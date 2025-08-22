@@ -642,6 +642,32 @@
             </div>
         </div>
 
+        <!-- ================= SEZIONE SFIDA DI ABILITÀ ================= -->
+        <div id="skill-challenge-section" class="spa-section">
+            <div class="layout-container">
+                <header class="header-section">
+                    <h1 id="skill-challenge-title" data-text="SFIDA DI ABILITÀ">SFIDA DI ABILITÀ</h1>
+                </header>
+
+                <main class="main-section" style="justify-content: center;">
+                    <div class="player-name-box">
+                        <div id="skill-challenge-description" class="player-name-description" style="margin-bottom: 30px;">
+                            Descrizione della sfida...
+                        </div>
+                        <div id="skill-challenge-content">
+                            <!-- Contenuto della sfida caricato da JS -->
+                        </div>
+                    </div>
+                </main>
+
+                <footer class="game-ui-footer-section">
+                    <div class="footer-left">
+                        <button class="back-button" onclick="backToMainMenu()">← BACK TO MAIN MENU</button>
+                    </div>
+                </footer>
+            </div>
+        </div>
+
         <!-- ================= SEZIONE NOME GIOCATORE ================= -->
         <div id="player-name-section" class="spa-section">
             <div class="layout-container">
@@ -841,7 +867,26 @@
                         "narrative": "Dopo ore di cammino, giunse a una radura. Al centro, una figura ammantata lo attendeva. 'Sei giunto, come previsto', disse la figura con una voce che sembrava un sussurro del vento. 'La tua avventura inizia ora. Ma ricorda: ogni scelta ha un prezzo.'",
                         "image": "cutscene_01_c.png"
                     }
+                ],
+                "nextChallengeId": "challenge_01"
+            },
+            "cutscene_02": {
+                "title": "La Prova Superata",
+                "slides": [
+                    {
+                        "narrative": "Con la prova superata, un nuovo sentiero si illumina davanti a te. L'avventura continua...",
+                        "image": "cutscene_02_a.png"
+                    }
                 ]
+            }
+        };
+
+        const skillChallenges = {
+            "challenge_01": {
+                "title": "Prova di Abilità",
+                "description": "Supera questa semplice prova per continuare la tua avventura.",
+                "type": "simple_click",
+                "successCutscene": "cutscene_02"
             }
         };
 
@@ -998,17 +1043,59 @@
         }
 
         function continueCutscene() {
-            const cutscene = cutsceneData.cutscene_01;
+            const cutscene = cutsceneData[gameData.currentCutsceneId];
             gameData.currentSlideIndex++;
 
             if (gameData.currentSlideIndex < cutscene.slides.length) {
                 loadCutscene(gameData.currentSlideIndex);
             } else {
-                showModal(
-                    'Fine Cutscene',
-                    'La cutscene è terminata. Le prove arcade verranno implementate successivamente.',
-                    [{ text: 'Torna al Menu', action: () => { closeModal(); backToMainMenu(); } }]
-                );
+                if (cutscene.nextChallengeId) {
+                    startChallenge(cutscene.nextChallengeId);
+                } else {
+                    showModal(
+                        'Fine Capitolo',
+                        'Hai completato questo capitolo della storia.',
+                        [{ text: 'Torna al Menu', action: () => { closeModal(); backToMainMenu(); } }]
+                    );
+                }
+            }
+        }
+
+        function startChallenge(challengeId) {
+            const challenge = skillChallenges[challengeId];
+            if (!challenge) {
+                console.error(`Sfida non trovata: ${challengeId}`);
+                return;
+            }
+
+            document.getElementById('skill-challenge-title').textContent = challenge.title;
+            document.getElementById('skill-challenge-title').setAttribute('data-text', challenge.title);
+            document.getElementById('skill-challenge-description').textContent = challenge.description;
+
+            const contentArea = document.getElementById('skill-challenge-content');
+            contentArea.innerHTML = ''; // Pulisce il contenuto precedente
+
+            // Qui verrà inserita la logica per i diversi tipi di sfide
+            if (challenge.type === 'simple_click') {
+                const button = document.createElement('button');
+                button.className = 'player-name-button';
+                button.textContent = 'Clicca per vincere!';
+                button.onclick = () => completeChallenge(challengeId);
+                contentArea.appendChild(button);
+            }
+
+            showSection('skill-challenge-section');
+        }
+
+        function completeChallenge(challengeId) {
+            const challenge = skillChallenges[challengeId];
+            if (challenge.successCutscene) {
+                gameData.currentCutsceneId = challenge.successCutscene;
+                gameData.currentSlideIndex = 0;
+                loadCutscene(gameData.currentSlideIndex);
+                showSection('cutscene-section');
+            } else {
+                backToMainMenu();
             }
         }
 
