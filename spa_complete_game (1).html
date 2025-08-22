@@ -811,8 +811,12 @@
 
         // Dati di gioco
         let gameData = {
-            playerName: '',
-            currentCutscene: 0,
+            player: {
+                name: '',
+                score: 0,
+                location: 'main-menu-section'
+            },
+            currentCutsceneId: 'cutscene_01',
             currentSlideIndex: 0,
             settings: {
                 volume: 50,
@@ -881,7 +885,7 @@
                 return;
             }
             
-            gameData.playerName = playerName;
+            gameData.player.name = playerName;
             console.log(`👤 Nome giocatore impostato: ${playerName}`);
             
             // Aggiorna il testo della cutscene con il nome del giocatore
@@ -891,11 +895,28 @@
         }
 
         function loadGame() {
-            showModal(
-                'Carica Partita',
-                'Funzione non ancora implementata. Usa "Import Savegame" per caricare un file di salvataggio.',
-                [{ text: 'OK', action: closeModal }]
-            );
+            if (loadGameState()) {
+                updateVolumeSlider();
+                updateVolumeIcon();
+                audioManager.setVolume(gameData.settings.volume);
+
+                showSection(gameData.player.location);
+                if (gameData.player.location === 'cutscene-section') {
+                    loadCutscene(gameData.currentSlideIndex);
+                }
+
+                showModal(
+                    'Caricamento Completato',
+                    `Bentornato, ${gameData.player.name}! La tua avventura riprende da dove l'avevi lasciata.`,
+                    [{ text: 'OK', action: closeModal }]
+                );
+            } else {
+                showModal(
+                    'Nessun Salvataggio',
+                    'Nessun salvataggio trovato. Inizia una nuova partita per creare un salvataggio.',
+                    [{ text: 'OK', action: closeModal }]
+                );
+            }
         }
 
         function showImportSavegame() {
@@ -944,6 +965,9 @@
         // ================= CUTSCENE FUNCTIONS =================
         
         function loadCutscene(slideIndex) {
+            gameData.player.location = 'cutscene-section';
+            saveGameState();
+
             const cutscene = cutsceneData.cutscene_01;
             if (cutscene && cutscene.slides && cutscene.slides.length > slideIndex) {
                 const slide = cutscene.slides[slideIndex];
@@ -954,8 +978,8 @@
                 
                 // Aggiorna il testo narrativo personalizzandolo con il nome del giocatore
                 let narrativeText = slide.narrative;
-                if (gameData.playerName) {
-                    narrativeText = narrativeText.replace(/nostro eroe/g, gameData.playerName);
+                if (gameData.player.name) {
+                    narrativeText = narrativeText.replace(/nostro eroe/g, gameData.player.name);
                     narrativeText = narrativeText.replace(/il suo/g, 'il tuo');
                     narrativeText = narrativeText.replace(/la sua/g, 'la tua');
                     narrativeText = narrativeText.replace(/ogni suo passo/g, 'ogni tuo passo');
@@ -1122,6 +1146,30 @@
             event.target.value = '';
         }
 
+        function saveGameState() {
+            try {
+                localStorage.setItem('gameData', JSON.stringify(gameData));
+                console.log('💾 Game state saved to localStorage');
+            } catch (error) {
+                console.error('Error saving game state to localStorage:', error);
+            }
+        }
+
+        function loadGameState() {
+            try {
+                const savedData = localStorage.getItem('gameData');
+                if (savedData) {
+                    gameData = JSON.parse(savedData);
+                    console.log('✅ Game state loaded from localStorage');
+                    return true;
+                }
+                return false;
+            } catch (error) {
+                console.error('Error loading game state from localStorage:', error);
+                return false;
+            }
+        }
+
         // ================= GESTIONE TASTIERA =================
         
         document.addEventListener('keydown', function(event) {
@@ -1144,14 +1192,22 @@
         // ================= INITIALIZATION =================
         
         window.addEventListener('load', function() {
-            showSection('main-menu-section');
+            if (loadGameState()) {
+                showSection(gameData.player.location);
+                if (gameData.player.location === 'cutscene-section') {
+                    loadCutscene(gameData.currentSlideIndex);
+                }
+            } else {
+                showSection('main-menu-section');
+            }
+
             updateVolumeSlider();
             updateVolumeIcon();
             
             const musicFiles = ['audio/placeholder.mp3'];
             audioManager.playBackgroundMusic(musicFiles);
             
-            console.log('🎮 SPA Gioco inizializzato - Menu principale');
+            console.log('🎮 SPA Gioco inizializzato');
         });
 
         window.addEventListener('resize', function() {
