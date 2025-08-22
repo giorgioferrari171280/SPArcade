@@ -813,6 +813,7 @@
         let gameData = {
             playerName: '',
             currentCutscene: 0,
+            currentSlideIndex: 0,
             settings: {
                 volume: 50,
                 muted: false
@@ -827,6 +828,14 @@
                     {
                         "narrative": "Era una notte buia e tempestosa quando il nostro eroe iniziò il suo viaggio. Le stelle erano nascoste dalle nuvole cariche di pioggia, e solo il bagliore intermittente dei fulmini illuminava il sentiero tortuoso che si estendeva davanti a lui.\n\nCon il cuore pieno di determinazione e la mente concentrata sull'obiettivo, prese il primo passo verso un destino che avrebbe cambiato per sempre il corso della sua vita. Non sapeva ancora quali sfide lo attendevano, ma era pronto ad affrontare qualsiasi ostacolo.\n\nIl vento ululava tra gli alberi spogli, creando una sinfonia inquietante che accompagnava ogni suo passo. Ad ogni lampo, ombre danzanti sembravano prendere vita, ma la sua determinazione non vacillava mai.",
                         "image": "cutscene_01_a.png"
+                    },
+                    {
+                        "narrative": "Il sentiero lo condusse a un bivio. A sinistra, una strada illuminata da lanterne prometteva sicurezza. A destra, un sentiero oscuro si inoltrava in una foresta fitta e minacciosa. Il nostro eroe non esitò. Sapeva che le vere sfide, e le maggiori ricompense, si trovavano lungo il percorso meno battuto.",
+                        "image": "cutscene_01_b.png"
+                    },
+                    {
+                        "narrative": "Dopo ore di cammino, giunse a una radura. Al centro, una figura ammantata lo attendeva. 'Sei giunto, come previsto', disse la figura con una voce che sembrava un sussurro del vento. 'La tua avventura inizia ora. Ma ricorda: ogni scelta ha un prezzo.'",
+                        "image": "cutscene_01_c.png"
                     }
                 ]
             }
@@ -876,7 +885,8 @@
             console.log(`👤 Nome giocatore impostato: ${playerName}`);
             
             // Aggiorna il testo della cutscene con il nome del giocatore
-            loadCutscene();
+            gameData.currentSlideIndex = 0;
+            loadCutscene(gameData.currentSlideIndex);
             showSection('cutscene-section');
         }
 
@@ -933,10 +943,10 @@
 
         // ================= CUTSCENE FUNCTIONS =================
         
-        function loadCutscene() {
+        function loadCutscene(slideIndex) {
             const cutscene = cutsceneData.cutscene_01;
-            if (cutscene && cutscene.slides && cutscene.slides.length > 0) {
-                const slide = cutscene.slides[0];
+            if (cutscene && cutscene.slides && cutscene.slides.length > slideIndex) {
+                const slide = cutscene.slides[slideIndex];
                 
                 // Aggiorna il titolo
                 document.getElementById('cutscene-title').textContent = cutscene.title;
@@ -964,13 +974,18 @@
         }
 
         function continueCutscene() {
-            // Per ora torna al menu principale
-            // In futuro qui ci sarà la logica per andare alle prove
-            showModal(
-                'Fine Cutscene',
-                'La cutscene è terminata. Le prove arcade verranno implementate successivamente.',
-                [{ text: 'Torna al Menu', action: () => { closeModal(); backToMainMenu(); } }]
-            );
+            const cutscene = cutsceneData.cutscene_01;
+            gameData.currentSlideIndex++;
+
+            if (gameData.currentSlideIndex < cutscene.slides.length) {
+                loadCutscene(gameData.currentSlideIndex);
+            } else {
+                showModal(
+                    'Fine Cutscene',
+                    'La cutscene è terminata. Le prove arcade verranno implementate successivamente.',
+                    [{ text: 'Torna al Menu', action: () => { closeModal(); backToMainMenu(); } }]
+                );
+            }
         }
 
         // ================= MODAL SYSTEM =================
