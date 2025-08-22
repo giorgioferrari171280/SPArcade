@@ -1059,7 +1059,7 @@
             gameData.player.location = 'cutscene-section';
             saveGameState();
 
-            const cutscene = cutsceneData.cutscene_01;
+            const cutscene = cutsceneData[gameData.currentCutsceneId];
             if (cutscene && cutscene.slides && cutscene.slides.length > slideIndex) {
                 const slide = cutscene.slides[slideIndex];
                 
