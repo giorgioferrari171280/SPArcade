@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gioco SPA - Narrativa e Arcade</title>
+    <style>
+        /* Reset base e configurazioni generali */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+            background: #000;
+            overflow: hidden;
+        }
+
+        /* Contenitore principale che gestisce il ridimensionamento */
+        .main-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            background: #000;
+            overflow: hidden;
+        }
+
+        /* Contenitore per l'immagine di sfondo */
+        .child-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .child-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Overlay scuro sopra l'immagine di sfondo */
+        .overlay-shadow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 2;
+        }
+
+        /* Sistema SPA - gestione sezioni */
+        .spa-section {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            display: none;
+        }
+
+        .spa-section.active {
+            display: block;
+        }
+
+        /* Layout container - struttura a 3 righe */
+        .layout-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Stile per la sezione dell'header */
+        .header-section {
+            width: 100%;
+            height: 80px;
+            background: rgba(0, 0, 0, 0.8);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Main content section */
+        .main-section {
+            width: 100%;
+            flex: 1;
+            background: transparent;
+            overflow-y: auto;
+            padding: 0;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Footer section */
+        .footer-section {
+            width: 100%;
+            height: 60px;
+            background: rgba(0, 0, 0, 0.5);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 40px;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Stile per il titolo dell'header */
+        .header-section h1 {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 5vh;
+            font-weight: 700;
+            color: #ffffff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            letter-spacing: 1px;
+            margin: 0;
+            text-transform: uppercase;
+            position: relative;
+        }
+
+        /* Effetto di glow per il titolo */
+        .header-section h1::before {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            color: rgba(255, 255, 255, 0.1);
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            z-index: -1;
+        }
+
+        /* Menu Box Container */
+        .menu-box {
+            margin-left: 3%;
+            width: 25%;
+            height: 80%;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 10px;
+            backdrop-filter: blur(5px);
+        }
+
+        /* Main Menu Container */
+        .main-menu {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Stile dei pulsanti del menu */
+        .menu-button {
+            width: 90%;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        .menu-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+            background: linear-gradient(135deg, #5dade2, #3498db);
+        }
+
+        .menu-button.exit {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        .menu-button.exit:hover {
+            background: linear-gradient(135deg, #ec7063, #e74c3c);
+            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+        }
+
+        /* ================= STILI SEZIONE NOME GIOCATORE ================= */
+        .player-name-container {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+
+        .player-name-box {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 40px;
+            backdrop-filter: blur(5px);
+            text-align: center;
+            max-width: 500px;
+        }
+
+        .player-name-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .player-name-description {
+            font-size: 16px;
+            margin-bottom: 30px;
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.5;
+        }
+
+        .player-name-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 18px;
+            text-align: center;
+            margin-bottom: 20px;
+            backdrop-filter: blur(5px);
+        }
+
+        .player-name-input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .player-name-input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .player-name-button {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 10px;
+        }
+
+        .player-name-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(46, 204, 113, 0.4);
+        }
+
+        .player-name-button.cancel {
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+        }
+
+        /* ================= STILI DELLA SEZIONE CUTSCENE ================= */
+
+        /* Stile per l'area principale del contenuto durante una cutscene. */
+        .cutscene-main-section {
+            width: 100%;
+            flex: 1;
+            background: transparent;
+            overflow: hidden;
+            padding: 0;
+            color: white;
+            font-family: Arial, sans-serif;
+            display: flex;
+            align-items: stretch;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        /* Stile per la colonna di sinistra, che contiene l'immagine della cutscene. */
+        .left-column {
+            width: 60%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Contenitore per l'immagine della cutscene. È progettato per essere un quadrato perfetto. */
+        .image-container {
+            width: 90%;
+            aspect-ratio: 1; 
+            max-width: 80vh;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            flex-shrink: 1;
+        }
+
+        /* Stile per l'immagine vera e propria dentro l'image-container */
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+            border-radius: 12px;
+        }
+
+        /* Stile per il testo segnaposto mostrato quando non c'è un'immagine. */
+        .image-placeholder {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 2vh;
+            text-align: center;
+            font-style: italic;
+        }
+
+        /* Stile per la colonna di destra, che contiene il testo narrativo e il pulsante "Continua". */
+        .right-column {
+            width: 40%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Stile per il box che contiene il testo narrativo. */
+        .narrative-section {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            backdrop-filter: blur(5px);
+            overflow-y: auto;
+        }
+
+        /* Stile del paragrafo di testo narrativo. */
+        .narrative-text {
+            color: #ffffff;
+            font-size: 2.2vh;
+            line-height: 1.6;
+            text-align: justify;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Contenitore per il pulsante "Continua". */
+        .button-section {
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Stile per il pulsante "Continua". */
+        .continue-button {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+        }
+
+        .continue-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(46, 204, 113, 0.4);
+            background: linear-gradient(135deg, #58d68d, #2ecc71);
+        }
+
+        /* Game UI Footer */
+        .game-ui-footer-section {
+            width: 100%;
+            height: 60px;
+            background: rgba(0, 0, 0, 0.8);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            color: white;
+            font-family: Arial, sans-serif;
+            z-index: 10;
+        }
+
+        .footer-left, .footer-center, .footer-right {
+            flex: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        .footer-center {
+            justify-content: center;
+        }
+
+        .footer-right {
+            justify-content: flex-end;
+        }
+
+        .back-button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+        }
+
+        /* Volume Control */
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .volume-icon {
+            font-size: 20px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .volume-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .volume-slider {
+            width: 80px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #3498db;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* Modal System */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+        .modal-container {
+            background: rgba(20, 20, 20, 0.95);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 80%;
+            max-height: 80%;
+            overflow-y: auto;
+            backdrop-filter: blur(10px);
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .modal-message {
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .modal-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+        }
+
+        .modal-button.secondary {
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .menu-box {
+                width: 90%;
+                margin-left: 5%;
+            }
+
+            .header-section h1 {
+                font-size: 3vh;
+            }
+
+            .cutscene-main-section {
+                flex-direction: column;
+                padding: 10px;
+            }
+
+            .left-column, .right-column {
+                width: 100%;
+            }
+
+            .image-container {
+                max-width: 90vw;
+                max-height: 40vh;
+            }
+        }
+
+        @media (max-height: 600px) {
+            .main-container {
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                width: 100vw;
+                height: 100vh;
+                max-width: 177.78vh;
+                max-height: 56.25vw;
+                transform: translate(-50%, -50%);
+            }
+
+            body {
+                background: #000;
+                overflow: hidden;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Contenitore principale -->
+    <div class="main-container">
+        
+        <!-- Immagine di sfondo -->
+        <div class="child-container">
+            <img src="main_menu_bg.png" alt="Immagine di sfondo">
+        </div>
+        
+        <!-- Overlay scuro -->
+        <div class="overlay-shadow"></div>
+
+        <!-- ================= SEZIONE MENU PRINCIPALE ================= -->
+        <div id="main-menu-section" class="spa-section active">
+            <div class="layout-container">
+                <header class="header-section">
+                    <h1 data-text="HEADER - TITOLO DELLA PAGINA">HEADER - TITOLO DELLA PAGINA</h1>
+                </header>
+                
+                <main class="main-section">
+                    <div class="menu-box">
+                        <div class="main-menu">
+                            <button class="menu-button" onclick="startNewGame()">Nuova Partita</button>
+                            <button class="menu-button" onclick="loadGame()">Continua Partita</button>
+                            <button class="menu-button" onclick="showImportSavegame()">Import Savegame</button>
+                            <button class="menu-button" onclick="showHallOfFame()">Hall of Fame</button>
+                            <button class="menu-button" onclick="showCredits()">Crediti</button>
+                            <button class="menu-button" onclick="showTutorial()">Tutorial</button>
+                            <button class="menu-button exit" onclick="exitGame()">Esci dal Gioco</button>
+                        </div>
+                    </div>
+                </main>
+                
+                <footer class="footer-section">
+                    <p>Usa i tasti freccia per navigare, Invio per selezionare</p>
+                </footer>
+            </div>
+        </div>
+
+        <!-- ================= SEZIONE NOME GIOCATORE ================= -->
+        <div id="player-name-section" class="spa-section">
+            <div class="layout-container">
+                <header class="header-section">
+                    <h1 data-text="NUOVO GIOCATORE">NUOVO GIOCATORE</h1>
+                </header>
+                
+                <main class="main-section">
+                    <div class="player-name-container">
+                        <div class="player-name-box">
+                            <div class="player-name-title">Benvenuto, Avventuriero!</div>
+                            <div class="player-name-description">
+                                Prima di iniziare la tua epica avventura, dimmi come vuoi essere chiamato. 
+                                Il tuo nome sarà ricordato nelle leggende!
+                            </div>
+                            <input type="text" id="player-name-input" class="player-name-input" placeholder="Inserisci il tuo nome..." maxlength="20">
+                            <div>
+                                <button class="player-name-button" onclick="confirmPlayerName()">Inizia Avventura</button>
+                                <button class="player-name-button cancel" onclick="backToMainMenu()">Annulla</button>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+                
+                <footer class="footer-section">
+                    <p>Inserisci un nome per il tuo personaggio</p>
+                </footer>
+            </div>
+        </div>
+
+        <!-- ================= SEZIONE CUTSCENE ================= -->
+        <div id="cutscene-section" class="spa-section">
+            <div class="layout-container">
+                <header class="header-section">
+                    <h1 id="cutscene-title" data-text="L'INIZIO DELL'AVVENTURA">L'INIZIO DELL'AVVENTURA</h1>
+                </header>
+                
+                <main class="cutscene-main-section">
+                    <!-- Colonna sinistra per l'immagine. -->
+                    <div class="left-column">
+                        <div class="image-container">
+                            <!-- Questo div funge da segnaposto per l'immagine, che verrà caricata da JavaScript. -->
+                            <div class="image-placeholder">Immagine della cutscene qui</div>
+                        </div>
+                    </div>
+
+                    <!-- Colonna destra per il testo e il pulsante. -->
+                    <div class="right-column">
+                        <!-- Box per il testo narrativo. -->
+                        <div class="narrative-section">
+                            <!-- Il testo della cutscene. Verrà popolato da JavaScript. -->
+                            <div class="narrative-text" id="cutscene-narrative-content">
+                                Era una notte buia e tempestosa quando il nostro eroe iniziò il suo viaggio. Le stelle erano nascoste dalle nuvole cariche di pioggia, e solo il bagliore intermittente dei fulmini illuminava il sentiero tortuoso che si estendeva davanti a lui.
+                                <br><br>
+                                Con il cuore pieno di determinazione e la mente concentrata sull'obiettivo, prese il primo passo verso un destino che avrebbe cambiato per sempre il corso della sua vita. Non sapeva ancora quali sfide lo attendevano, ma era pronto ad affrontare qualsiasi ostacolo.
+                                <br><br>
+                                Il vento ululava tra gli alberi spogli, creando una sinfonia inquietante che accompagnava ogni suo passo. Ad ogni lampo, ombre danzanti sembravano prendere vita, ma la sua determinazione non vacillava mai.
+                            </div>
+                        </div>
+
+                        <!-- Sezione per il pulsante "Continua". -->
+                        <div class="button-section">
+                            <button class="continue-button" onclick="continueCutscene()">CONTINUA</button>
+                        </div>
+                    </div>
+                </main>
+                
+                <footer class="game-ui-footer-section">
+                    <div class="footer-left">
+                        <button class="back-button" onclick="backToMainMenu()">← BACK TO MAIN MENU</button>
+                    </div>
+                    <div class="footer-center">
+                        <button class="back-button" onclick="downloadSavegame()" style="background: linear-gradient(135deg, #27ae60, #229954);">💾 DOWNLOAD SAVEGAME</button>
+                    </div>
+                    <div class="footer-right">
+                        <div class="volume-control">
+                            <span class="volume-icon" onclick="toggleMute()">🔊</span>
+                            <input type="range" id="volume-slider" class="volume-slider" min="0" max="100" value="50" oninput="changeVolume(this.value)">
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= SISTEMA DI MODALI ================= -->
+    <div id="modal-overlay" class="modal-overlay" onclick="closeModalOnOverlayClick(event)">
+        <div class="modal-container" onclick="event.stopPropagation()">
+            <div id="modal-image-container" class="modal-image-container"></div>
+            <div id="modal-title" class="modal-title"></div>
+            <div id="modal-message" class="modal-message"></div>
+            <div id="modal-buttons" class="modal-buttons"></div>
+        </div>
+    </div>
+
+    <!-- Input per file salvataggio -->
+    <input type="file" id="savegame-file-input" accept=".json" style="display: none;" onchange="handleSavegameFileLoad(event)">
+
+    <script>
+        // ================= VARIABILI GLOBALI =================
+        
+        // Gestore Audio
+        class AudioManager {
+            constructor() {
+                this.backgroundMusic = null;
+                this.musicFiles = [];
+                this.currentTrackIndex = 0;
+                console.log('🔊 Audio Manager initialized');
+            }
+
+            playBackgroundMusic(files) {
+                if (!files || files.length === 0) {
+                    console.error('No music files provided.');
+                    return;
+                }
+                this.musicFiles = files;
+                this.currentTrackIndex = 0;
+                this.loadAndPlayTrack();
+            }
+
+            loadAndPlayTrack() {
+                if (this.backgroundMusic) {
+                    this.backgroundMusic.pause();
+                    this.backgroundMusic = null;
+                }
+
+                const currentFile = this.musicFiles[this.currentTrackIndex];
+                this.backgroundMusic = new Audio(currentFile);
+                this.backgroundMusic.volume = gameData.settings.volume / 100;
+                this.backgroundMusic.loop = this.musicFiles.length === 1;
+
+                this.backgroundMusic.addEventListener('ended', () => {
+                    if (this.musicFiles.length > 1) {
+                        this.currentTrackIndex = (this.currentTrackIndex + 1) % this.musicFiles.length;
+                        this.loadAndPlayTrack();
+                    }
+                });
+
+                this.backgroundMusic.addEventListener('error', (e) => {
+                    console.warn(`Audio file ${currentFile} failed to load:`, e);
+                });
+
+                this.backgroundMusic.play().catch(error => {
+                    console.warn('Audio playback failed:', error);
+                });
+            }
+
+            setVolume(volume) {
+                if (this.backgroundMusic) {
+                    this.backgroundMusic.volume = volume / 100;
+                }
+            }
+
+            toggleMute() {
+                if (this.backgroundMusic) {
+                    this.backgroundMusic.muted = !this.backgroundMusic.muted;
+                }
+            }
+
+            isMuted() {
+                return this.backgroundMusic ? this.backgroundMusic.muted : false;
+            }
+        }
+
+        // Istanza globale del gestore audio
+        const audioManager = new AudioManager();
+
+        // Dati di gioco
+        let gameData = {
+            playerName: '',
+            currentCutscene: 0,
+            settings: {
+                volume: 50,
+                muted: false
+            }
+        };
+
+        // Dati delle cutscene
+        const cutsceneData = {
+            "cutscene_01": {
+                "title": "L'Inizio dell'Avventura",
+                "slides": [
+                    {
+                        "narrative": "Era una notte buia e tempestosa quando il nostro eroe iniziò il suo viaggio. Le stelle erano nascoste dalle nuvole cariche di pioggia, e solo il bagliore intermittente dei fulmini illuminava il sentiero tortuoso che si estendeva davanti a lui.\n\nCon il cuore pieno di determinazione e la mente concentrata sull'obiettivo, prese il primo passo verso un destino che avrebbe cambiato per sempre il corso della sua vita. Non sapeva ancora quali sfide lo attendevano, ma era pronto ad affrontare qualsiasi ostacolo.\n\nIl vento ululava tra gli alberi spogli, creando una sinfonia inquietante che accompagnava ogni suo passo. Ad ogni lampo, ombre danzanti sembravano prendere vita, ma la sua determinazione non vacillava mai.",
+                        "image": "cutscene_01_a.png"
+                    }
+                ]
+            }
+        };
+
+        // ================= FUNZIONI DI NAVIGAZIONE SPA =================
+        
+        function showSection(sectionId) {
+            // Nasconde tutte le sezioni
+            document.querySelectorAll('.spa-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Mostra la sezione richiesta
+            const targetSection = document.getElementById(sectionId);
+            if (targetSection) {
+                targetSection.classList.add('active');
+                console.log(`🎮 Sezione attiva: ${sectionId}`);
+            }
+        }
+
+        // ================= MENU FUNCTIONS =================
+        
+        function startNewGame() {
+            console.log('🎮 Avviando nuova partita...');
+            showSection('player-name-section');
+            // Focus sull'input del nome
+            setTimeout(() => {
+                document.getElementById('player-name-input').focus();
+            }, 100);
+        }
+
+        function confirmPlayerName() {
+            const nameInput = document.getElementById('player-name-input');
+            const playerName = nameInput.value.trim();
+            
+            if (playerName === '') {
+                showModal(
+                    'Nome Richiesto',
+                    'Per favore, inserisci un nome per il tuo personaggio.',
+                    [{ text: 'OK', action: closeModal }]
+                );
+                return;
+            }
+            
+            gameData.playerName = playerName;
+            console.log(`👤 Nome giocatore impostato: ${playerName}`);
+            
+            // Aggiorna il testo della cutscene con il nome del giocatore
+            loadCutscene();
+            showSection('cutscene-section');
+        }
+
+        function loadGame() {
+            showModal(
+                'Carica Partita',
+                'Funzione non ancora implementata. Usa "Import Savegame" per caricare un file di salvataggio.',
+                [{ text: 'OK', action: closeModal }]
+            );
+        }
+
+        function showImportSavegame() {
+            document.getElementById('savegame-file-input').click();
+        }
+
+        function showHallOfFame() {
+            showModal(
+                'Hall of Fame',
+                '🏆 CLASSIFICA DEI MIGLIORI PUNTEGGI 🏆\n\n1. Giocatore Leggendario - 9999 punti\n2. Maestro dell\'Avventura - 5000 punti\n3. Esploratore Coraggioso - 2500 punti\n\nNessun punteggio registrato per ora.',
+                [{ text: 'Chiudi', action: closeModal }]
+            );
+        }
+
+        function showCredits() {
+            showModal(
+                'Crediti',
+                '🎮 AVVENTURA NARRATIVA 🎮\n\nCreato con passione per unire storytelling e gameplay arcade.\n\nRingraziamenti speciali a tutti i giocatori che parteciperanno a questa avventura!\n\n© 2025 - Tutti i diritti riservati',
+                [{ text: 'Chiudi', action: closeModal }]
+            );
+        }
+
+        function showTutorial() {
+            showModal(
+                'Tutorial',
+                '📖 COME GIOCARE 📖\n\n1. Segui la storia attraverso le cutscene\n2. Supera le prove arcade per continuare\n3. Ogni prova ha regole diverse - leggi attentamente!\n4. Usa i controlli per navigare nell\'interfaccia\n\nLe prove verranno aggiunte nel corso dello sviluppo.',
+                [{ text: 'Ho capito', action: closeModal }]
+            );
+        }
+
+        function exitGame() {
+            showModal(
+                'Uscita dal Gioco',
+                'Sei sicuro di voler uscire dal gioco?\nI progressi non salvati andranno persi.',
+                [
+                    { text: 'Esci', action: () => { window.close(); } },
+                    { text: 'Annulla', action: closeModal }
+                ]
+            );
+        }
+
+        function backToMainMenu() {
+            showSection('main-menu-section');
+        }
+
+        // ================= CUTSCENE FUNCTIONS =================
+        
+        function loadCutscene() {
+            const cutscene = cutsceneData.cutscene_01;
+            if (cutscene && cutscene.slides && cutscene.slides.length > 0) {
+                const slide = cutscene.slides[0];
+                
+                // Aggiorna il titolo
+                document.getElementById('cutscene-title').textContent = cutscene.title;
+                document.getElementById('cutscene-title').setAttribute('data-text', cutscene.title);
+                
+                // Aggiorna il testo narrativo personalizzandolo con il nome del giocatore
+                let narrativeText = slide.narrative;
+                if (gameData.playerName) {
+                    narrativeText = narrativeText.replace(/nostro eroe/g, gameData.playerName);
+                    narrativeText = narrativeText.replace(/il suo/g, 'il tuo');
+                    narrativeText = narrativeText.replace(/la sua/g, 'la tua');
+                    narrativeText = narrativeText.replace(/ogni suo passo/g, 'ogni tuo passo');
+                }
+                
+                document.getElementById('cutscene-narrative-content').innerHTML = narrativeText.replace(/\n\n/g, '<br><br>');
+                
+                // Gestisce l'immagine
+                const imageContainer = document.querySelector('.image-container');
+                if (slide.image) {
+                    imageContainer.innerHTML = `<img src="${slide.image}" alt="Immagine cutscene" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\'image-placeholder\\'>Immagine non trovata</div>';">`;
+                } else {
+                    imageContainer.innerHTML = '<div class="image-placeholder">Immagine della cutscene qui</div>';
+                }
+            }
+        }
+
+        function continueCutscene() {
+            // Per ora torna al menu principale
+            // In futuro qui ci sarà la logica per andare alle prove
+            showModal(
+                'Fine Cutscene',
+                'La cutscene è terminata. Le prove arcade verranno implementate successivamente.',
+                [{ text: 'Torna al Menu', action: () => { closeModal(); backToMainMenu(); } }]
+            );
+        }
+
+        // ================= MODAL SYSTEM =================
+        
+        function showModal(title, message, buttons) {
+            const overlay = document.getElementById('modal-overlay');
+            const titleEl = document.getElementById('modal-title');
+            const messageEl = document.getElementById('modal-message');
+            const buttonsEl = document.getElementById('modal-buttons');
+            
+            titleEl.textContent = title;
+            messageEl.textContent = message;
+            
+            buttonsEl.innerHTML = '';
+            buttons.forEach(button => {
+                const btn = document.createElement('button');
+                btn.className = 'modal-button';
+                btn.textContent = button.text;
+                btn.onclick = button.action;
+                buttonsEl.appendChild(btn);
+            });
+            
+            overlay.classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('show');
+        }
+
+        function closeModalOnOverlayClick(event) {
+            if (event.target === event.currentTarget) {
+                closeModal();
+            }
+        }
+
+        // ================= AUDIO FUNCTIONS =================
+        
+        function changeVolume(value) {
+            gameData.settings.volume = parseInt(value);
+            audioManager.setVolume(gameData.settings.volume);
+            updateVolumeIcon();
+        }
+
+        function toggleMute() {
+            audioManager.toggleMute();
+            gameData.settings.muted = audioManager.isMuted();
+            updateVolumeIcon();
+        }
+
+        function updateVolumeIcon() {
+            const icon = document.querySelector('.volume-icon');
+            if (gameData.settings.muted || gameData.settings.volume === 0) {
+                icon.textContent = '🔇';
+            } else if (gameData.settings.volume < 50) {
+                icon.textContent = '🔉';
+            } else {
+                icon.textContent = '🔊';
+            }
+        }
+
+        function updateVolumeSlider() {
+            document.getElementById('volume-slider').value = gameData.settings.volume;
+        }
+
+        // ================= SAVE/LOAD SYSTEM =================
+        
+        function downloadSavegame() {
+            try {
+                const saveData = {
+                    gameData: gameData,
+                    timestamp: new Date().toISOString(),
+                    version: '1.0'
+                };
+                
+                const dataStr = JSON.stringify(saveData, null, 2);
+                const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(dataBlob);
+                link.download = `avventura_save_${new Date().getTime()}.json`;
+                link.click();
+                
+                showModal(
+                    'Salvataggio Completato',
+                    'Il file di salvataggio è stato scaricato con successo!',
+                    [{ text: 'OK', action: closeModal }]
+                );
+            } catch (error) {
+                console.error('Errore durante il salvataggio:', error);
+                showModal(
+                    'Errore di Salvataggio',
+                    'Si è verificato un errore durante il salvataggio.',
+                    [{ text: 'OK', action: closeModal }]
+                );
+            }
+        }
+
+        function handleSavegameFileLoad(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const saveData = JSON.parse(e.target.result);
+                    
+                    if (saveData.gameData) {
+                        gameData = saveData.gameData;
+                        
+                        updateVolumeSlider();
+                        updateVolumeIcon();
+                        audioManager.setVolume(gameData.settings.volume);
+                        
+                        showModal(
+                            'Caricamento Completato',
+                            'Salvataggio caricato con successo!',
+                            [{ text: 'OK', action: closeModal }]
+                        );
+                    } else {
+                        throw new Error('Formato file non valido');
+                    }
+                } catch (error) {
+                    console.error('Errore nel caricamento:', error);
+                    showModal(
+                        'Errore di Caricamento',
+                        'Il file selezionato non è un salvataggio valido.',
+                        [{ text: 'OK', action: closeModal }]
+                    );
+                }
+            };
+            reader.readAsText(file);
+            
+            // Reset input
+            event.target.value = '';
+        }
+
+        // ================= GESTIONE TASTIERA =================
+        
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const overlay = document.getElementById('modal-overlay');
+                if (overlay.classList.contains('show')) {
+                    closeModal();
+                }
+            }
+            
+            // Gestione Enter nell'input del nome
+            if (event.key === 'Enter') {
+                const activeSection = document.querySelector('.spa-section.active');
+                if (activeSection && activeSection.id === 'player-name-section') {
+                    confirmPlayerName();
+                }
+            }
+        });
+
+        // ================= INITIALIZATION =================
+        
+        window.addEventListener('load', function() {
+            showSection('main-menu-section');
+            updateVolumeSlider();
+            updateVolumeIcon();
+            
+            const musicFiles = ['audio/placeholder.mp3'];
+            audioManager.playBackgroundMusic(musicFiles);
+            
+            console.log('🎮 SPA Gioco inizializzato - Menu principale');
+        });
+
+        window.addEventListener('resize', function() {
+            // Gestione responsive automatica tramite CSS
+        });
+
+    </script>
+</body>
+</html>
