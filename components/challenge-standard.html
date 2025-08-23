@@ -1,0 +1,43 @@
+<div id="skill-challenge-section" class="spa-section">
+    <div class="letterbox-wrapper">
+        <div class="main-container">
+            <div class="layout-container">
+                <header class="challenge-header-section">
+                    <h1 id="skill-challenge-title" data-text="SCASSO DELLA PORTA SASSONE ">SCASSO DELLA PORTA SASSONE </h1>
+                </header>
+                <div class="central-area">
+                    <div class="challenge-left-column">
+                        <div class="square-image-container"><div class="mission-icon" id="missionIcon">🗝</div></div>
+                        <div class="text-box"><div class="game-status" id="game-status"></div></div>
+                    </div>
+                    <div class="challenge-right-column">
+                        <div class="right-top-band">
+                            <span class="variable-label">Allarme:</span>
+                            <div style="display: flex; flex-direction: column; align-items: flex-end; flex: 1; margin-left: 20px;">
+                                <span class="variable-value" id="suspicion-text">0/100</span>
+                                <div class="suspicion-bar" style="width: 100%; margin-top: 8px;"><div class="suspicion-fill" id="suspicion-fill"></div></div>
+                            </div>
+                        </div>
+                        <div class="right-center-band">
+                            <span class="variable-label">🗝 Progresso:</span>
+                            <div style="display: flex; flex-direction: column; align-items: flex-end; flex: 1; margin-left: 20px;">
+                                <span class="variable-value" id="progress-counter">0/15</span>
+                                <div class="progress-bar" style="width: 100%; margin-top: 8px;"><div class="progress-fill" id="progress-fill"></div></div>
+                            </div>
+                        </div>
+                        <div class="right-bottom-band">
+                            <div style="width: 100%;">
+                                <div class="lockpick-bar" id="lockpick-bar"><div class="lockpick-sweet-spot" id="sweet-spot"></div><div class="lockpick-thumb" id="thumb"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <footer class="game-ui-footer-section"><div class="footer-left"><button class="back-button" onclick="backToMainMenu()">🏃 RITIRATA</button></div></footer>
+            </div>
+            
+            <div id="result-screen" class="result-overlay hidden">
+                <div class="result-content"><div class="result-title" id="result-title"></div><div class="result-icon" id="result-icon"></div><div class="result-message" id="result-message"></div><div id="result-buttons"></div></div>
+            </div>
+        </div>
+    </div>
+</div>

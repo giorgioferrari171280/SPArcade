@@ -1,0 +1,37 @@
+/* ================================================================= */
+/* ================ VIKING RAIDS - STILI MODULARI ================== */
+/* ================================================================= */
+
+/* Import dei componenti CSS modulari */
+@import url('./components/base.css');
+@import url('./components/menu.css');
+@import url('./components/cutscene.css');
+@import url('./components/challenges-common.css');
+@import url('./components/challenge-scasso.css');
+@import url('./components/challenge-lockpick-standard.css');
+@import url('./components/challenge-lockpick-timer.css');
+@import url('./components/challenge-combat.css');
+@import url('./components/challenge-lockpick-perfect.css');
+@import url('./components/challenge-score-accumulator.css');
+@import url('./components/challenge-sudden-death.css');
+@import url('./components/challenge-hit-or-miss.css');
+@import url('./components/challenge-double-bar.css');
+@import url('./components/footer-modals.css');
+@import url('./components/responsive.css');
+
+/* File principale che aggrega tutti i componenti CSS del gioco Viking Raids
+   Ogni sezione è ora organizzata in file separati per una migliore manutenibilità:
+   
+   - base.css: Reset CSS, contenitori principali e sistema SPA
+   - menu.css: Header, menu principale e sezione inserimento nome giocatore
+   - cutscene.css: Layout per le scene narrative del gioco
+   - challenges-common.css: Elementi comuni a tutte le sfide (barre, icone, risultati)
+   - challenge-lockpick-standard.css: Sfida scasso standard (3 bande)
+   - challenge-lockpick-timer.css: Sfida scasso con timer (4 bande)
+   - challenge-combat.css: Sfida combattimento con doppia barra
+   - challenge-lockpick-perfect.css: Sfida scasso modalità perfetta
+   - challenge-score-accumulator.css: Sfida accumulo punteggio
+   - challenge-sudden-death.css: Sfida finale sudden death
+   - footer-modals.css: Footer del gioco e finestre modali
+   - responsive.css: Media queries per tutte le risoluzioni
+*/

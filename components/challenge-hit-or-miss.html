@@ -1,0 +1,68 @@
+<!-- Hit or Miss Challenge Component -->
+<div class="spa-section challenge-section" id="challenge-hit-or-miss-section">
+    <div class="letterbox-wrapper">
+        <div class="main-container">
+            <!-- Elemento figlio identico al padre con immagine -->
+            <div class="child-container">
+                <img id="background-image" src="sniper_bg.png" alt="Immagine di sfondo">
+            </div>
+            
+            <!-- Overlay shadow sopra l'immagine -->
+            <div class="overlay-shadow"></div>
+            
+            <!-- Layout container principale -->
+            <div class="layout-container">
+                <!-- Area centrale con meta sinistra e destra -->
+                <div class="main-section">
+                    <!-- Meta sinistra con i suoi contenitori -->
+                    <div class="meta_sinistra">
+                        <div class="box_immagine">
+                            <div class="mission-icon" id="missionIcon">🎯</div>
+                        </div>
+                        
+                        <div class="barra_verticale">
+                            <div class="vertical-bar-label">ASSE Y</div>
+                            <div class="vertical-bar" id="vertical-bar">
+                                <div class="sweet-spot vertical" id="vertical-sweet-spot"></div>
+                                <div class="thumb vertical inactive" id="vertical-thumb"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="barra_inferiore">
+                            <div class="bar-label">ASSE X</div>
+                            <div class="horizontal-bar" id="horizontal-bar">
+                                <div class="sweet-spot horizontal" id="horizontal-sweet-spot"></div>
+                                <div class="thumb horizontal" id="horizontal-thumb"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Meta destra con i tre contenitori orizzontali -->
+                    <div class="meta_destra">
+                        <div class="destra_alto">
+                            <div class="narrative-text">
+                                🎯 <strong>MISSIONE CECCHINO</strong><br>
+                                Sei un tiratore scelto in posizione. Il bersaglio è nel mirino.<br>
+                                Hai <strong>UN SOLO COLPO</strong> per completare la missione.<br>
+                                Allinea perfettamente entrambi gli assi X e Y per centrare il bersaglio.
+                            </div>
+                        </div>
+                        <div class="destra_centro">
+                            <div class="game-status" id="game-status">
+                                Premi SPAZIO per iniziare la missione
+                            </div>
+                        </div>
+                        <div class="destra_basso">
+                            <!-- Sezione bassa vuota per ora -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Footer section -->
+                <div class="footer-section">
+                    🎯 HIT OR MISS - ONE SHOT ONE KILL 🎯
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

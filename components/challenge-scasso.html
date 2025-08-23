@@ -1,0 +1,94 @@
+<div id="skill-challenge-section" class="spa-section">
+    <div class="letterbox-wrapper">
+        <div class="main-container">
+            <!-- Elemento figlio identico al padre con immagine -->
+            <div class="child-container">
+                <img id="background-image" src="images/forest_path.png" alt="Immagine di sfondo">
+            </div>
+            
+            <!-- Overlay shadow sopra l'immagine -->
+            <div class="overlay-shadow"></div>
+            
+            <!-- Layout container principale -->
+            <div class="layout-container">
+                <!-- Area centrale con meta sinistra e destra -->
+                <div class="main-section">
+                    <!-- Meta sinistra con i suoi contenitori -->
+                    <div class="meta_sinistra">
+                        <div class="box_immagine">
+                            <div class="mission-icon" id="missionIcon">🗝</div>
+                        </div>
+                        <div class="barra_verticale">
+                            <!-- Contenuto della barra verticale -->
+                        </div>
+                        <div class="barra_inferiore">
+                            <div class="game-status" id="game-status">
+                                <!-- Il testo viene caricato da JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Meta destra con i tre contenitori orizzontali -->
+                    <div class="meta_destra">
+                        <div class="destra_alto">
+                            <div style="display: flex; justify-content: center; align-items: center; height: 40%; background: rgba(15, 10, 5, 0.9); border-radius: 6px; margin-bottom: 5px;">
+                                <span style="color: #F5DEB3; font-size: 2.8vmin; font-weight: bold; text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.9); font-family: 'Segoe UI', sans-serif; text-transform: uppercase; letter-spacing: 2px;">🚨 LIVELLO ALLARME 🚨</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; height: 60%; padding: 0 15px;">
+                                <span class="variable-label">Allarme:</span>
+                                <div style="display: flex; flex-direction: column; align-items: flex-end; flex: 1; margin-left: 20px;">
+                                    <span class="variable-value" id="suspicion-text">0/100</span>
+                                    <div class="suspicion-bar" style="width: 100%; margin-top: 8px;">
+                                        <div class="suspicion-fill" id="suspicion-fill"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="destra_centro">
+                            <div style="display: flex; justify-content: center; align-items: center; height: 40%; background: rgba(15, 10, 5, 0.9); border-radius: 6px; margin-bottom: 5px;">
+                                <span style="color: #98FB98; font-size: 2.8vmin; font-weight: bold; text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.9); font-family: 'Segoe UI', sans-serif; text-transform: uppercase; letter-spacing: 2px;">🔓 PROGRESSO SCASSO 🔓</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; height: 60%; padding: 0 15px;">
+                                <span class="variable-label">Progresso:</span>
+                                <div style="display: flex; flex-direction: column; align-items: flex-end; flex: 1; margin-left: 20px;">
+                                    <span class="variable-value" id="progress-counter">0/15</span>
+                                    <div class="progress-bar" style="width: 100%; margin-top: 8px;">
+                                        <div class="progress-fill" id="progress-fill"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="destra_basso">
+                            <div style="display: flex; justify-content: center; align-items: center; height: 40%; background: rgba(15, 10, 5, 0.9); border-radius: 6px; margin-bottom: 5px;">
+                                <span style="color: #FFD700; font-size: 2.8vmin; font-weight: bold; text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.9); font-family: 'Segoe UI', sans-serif; text-transform: uppercase; letter-spacing: 2px;">⚡ BARRA LOCKPICKING ⚡</span>
+                            </div>
+                            <div style="display: flex; align-items: center; height: 60%; padding: 0 15px;">
+                                <div style="width: 100%;">
+                                    <div class="lockpick-bar" id="lockpick-bar">
+                                        <div class="lockpick-sweet-spot" id="sweet-spot"></div>
+                                        <div class="lockpick-thumb" id="thumb"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Footer section -->
+                <div class="footer-section">
+                    <h1 data-text="🗝 IL SENTIERO VERSO IL VILLAGGIO 🗝" id="skill-challenge-title">🗝 IL SENTIERO VERSO IL VILLAGGIO 🗝</h1>
+                </div>
+            </div>
+
+            <!-- Schermata risultato -->
+            <div id="result-screen" class="result-overlay hidden">
+                <div class="result-content">
+                    <div class="result-title" id="result-title"></div>
+                    <div class="result-icon" id="result-icon"></div>
+                    <div class="result-message" id="result-message"></div>
+                    <div id="result-buttons"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

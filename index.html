@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viking Raids - Gioco Modulare</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Contenitore principale -->
+    <div class="main-container">
+        
+        <!-- Immagine di sfondo -->
+        <div class="child-container">
+            <img src="main_menu_bg.png" alt="Immagine di sfondo">
+        </div>
+        
+        <!-- Overlay scuro -->
+        <div class="overlay-shadow"></div>
+
+        <!-- I componenti delle sezioni verranno caricati dinamicamente qui dal ComponentLoader -->
+        
+    </div>
+
+    <!-- Il sistema di modali verrà caricato dinamicamente qui dal ComponentLoader -->
+
+    <!-- Input per file salvataggio -->
+    <input type="file" id="savegame-file-input" accept=".json" style="display: none;" onchange="handleSavegameFileLoad(event)">
+
+    <!-- JavaScript files modulari -->
+    <!-- Dati di gioco -->
+    <script src="data/cutscenes.js"></script>
+    <script src="data/challenges.js"></script>
+    
+    <!-- Core modules - Dati globali per primi -->
+    <script src="js/modules/core/gameData.js"></script>
+    <script src="js/modules/core/AudioManager.js"></script>
+    
+    <!-- Component Loader - Deve essere caricato prima di tutto -->
+    <script src="js/modules/core/componentLoader.js"></script>
+    
+    <!-- Core functions -->
+    <script src="js/modules/core/showSection.js"></script>
+    <script src="js/modules/core/saveGameState.js"></script>
+    <script src="js/modules/core/loadGameState.js"></script>
+    <script src="js/modules/core/setupChallengeDisplay.js"></script>
+    <script src="js/modules/core/startNewGame.js"></script>
+    <script src="js/modules/core/confirmPlayerName.js"></script>
+    <script src="js/modules/core/loadGame.js"></script>
+    <script src="js/modules/core/backToMainMenu.js"></script>
+    <script src="js/modules/core/showImportSavegame.js"></script>
+    <script src="js/modules/core/downloadSavegame.js"></script>
+    <script src="js/modules/core/handleSavegameFileLoad.js"></script>
+    
+    <!-- Cutscene functions -->
+    <script src="js/modules/core/loadCutscene.js"></script>
+    <script src="js/modules/core/continueCutscene.js"></script>
+    
+    <!-- Audio functions -->
+    <script src="js/modules/core/changeVolume.js"></script>
+    <script src="js/modules/core/toggleMute.js"></script>
+    <script src="js/modules/core/updateVolumeIcon.js"></script>
+    <script src="js/modules/core/updateVolumeSlider.js"></script>
+    
+    <!-- UI functions -->
+    <script src="js/modules/ui/showModal.js"></script>
+    <script src="js/modules/ui/closeModal.js"></script>
+    <script src="js/modules/ui/closeModalOnOverlayClick.js"></script>
+    <script src="js/modules/ui/showDefeatChoiceModal.js"></script>
+    <script src="js/modules/ui/showHallOfFame.js"></script>
+    <script src="js/modules/ui/showCredits.js"></script>
+    <script src="js/modules/ui/showTutorial.js"></script>
+    <script src="js/modules/ui/exitGame.js"></script>
+    
+    <!-- Game classes -->
+    <script src="js/modules/games/scasso/loadScassoModules.js"></script>
+    <script src="js/modules/games/VikingLockpickGame.js"></script>
+    <script src="js/modules/games/TimedLockpickGame.js"></script>
+    <script src="js/modules/games/DualBarCombatGame.js"></script>
+    <script src="js/modules/games/PerfectLockpickGame.js"></script>
+    <script src="js/modules/games/ScoreAccumulatorGame.js"></script>
+    <script src="js/modules/games/SuddenDeathGame.js"></script>
+    <script src="js/modules/games/HitOrMissGame.js"></script>
+    <script src="js/modules/games/DoubleBarCombatGame.js"></script>
+    
+    <!-- Challenge management -->
+    <script src="js/modules/core/startChallenge.js"></script>
+    <script src="js/modules/core/completeChallenge.js"></script>
+    <script src="js/modules/core/failChallenge.js"></script>
+    <script src="js/modules/core/retryFailedChallenge.js"></script>
+    
+    <!-- Initialization -->
+    <script src="js/modules/core/initialization.js"></script>
+    
+    <!-- Main file -->
+    <script src="js/main.js"></script>
+</body>
+</html>

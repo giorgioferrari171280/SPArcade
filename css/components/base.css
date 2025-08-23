@@ -1,0 +1,114 @@
+/* ================================================================= */
+/* =================== STILI COMUNI E GENERALI ===================== */
+/* ================================================================= */
+
+/* Reset base e configurazioni generali */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: white;
+    background: #000;
+    overflow: hidden;
+    user-select: none;
+}
+
+/* ========= SISTEMA LETTERBOX 16:9 GLOBALE ========= */
+
+/* Letterbox wrapper 16:9 per tutta l'applicazione */
+.letterbox-wrapper {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100vmin;
+    height: calc(100vmin * 9 / 16);
+    max-width: 100vw;
+    max-height: calc(100vw * 9 / 16);
+}
+
+/* Responsive letterbox per aspect ratio diversi */
+@media screen and (max-aspect-ratio: 16/9) {
+    .letterbox-wrapper {
+        width: 100vw;
+        height: calc(100vw * 9 / 16);
+    }
+}
+
+@media screen and (min-aspect-ratio: 16/9) {
+    .letterbox-wrapper {
+        width: calc(100vh * 16 / 9);
+        height: 100vh;
+    }
+}
+
+/* Contenitore principale dentro il letterbox */
+.main-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    background: #000;
+    overflow: hidden;
+}
+
+/* Contenitore per l'immagine di sfondo */
+.child-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.child-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Overlay scuro sopra l'immagine di sfondo */
+.overlay-shadow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 2;
+}
+
+/* Sistema SPA - gestione sezioni */
+.spa-section {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    display: none;
+}
+
+.spa-section.active {
+    display: block;
+}
+
+/* Layout container - struttura a 3 righe (usato da più sezioni) */
+.layout-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.hidden {
+    display: none !important;
+}

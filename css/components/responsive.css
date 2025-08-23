@@ -1,0 +1,187 @@
+/* ================================================================= */
+/* ==================== MEDIA QUERIES RESPONSIVE ================== */
+/* ================================================================= */
+
+/* 8K UHD - 7680x4320 - scala 4 */
+@media screen and (width: 7680px) and (height: 4320px) {
+    .main-container {
+        transform: scale(4);
+    }
+}
+
+/* 5K - 5120x2880 - scala 2.66 */
+@media screen and (width: 5120px) and (height: 2880px) {
+    .main-container {
+        transform: scale(2.66);
+    }
+}
+
+/* 4K UHD - 3840x2160 - scala 2 */
+@media screen and (width: 3840px) and (height: 2160px) {
+    .main-container {
+        transform: scale(2);
+    }
+}
+
+/* QHD+ - 3200x1800 - scala 1.66 */
+@media screen and (width: 3200px) and (height: 1800px) {
+    .main-container {
+        transform: scale(1.66);
+    }
+}
+
+/* QHD - 2560x1440 - scala 1.33 */
+@media screen and (width: 2560px) and (height: 1440px) {
+    .main-container {
+        transform: scale(1.33);
+    }
+}
+
+/* Custom - 2048x1152 - scala 1.06 */
+@media screen and (width: 2048px) and (height: 1152px) {
+    .main-container {
+        transform: scale(1.06);
+    }
+}
+
+/* Full HD - 1920x1080 - scala 1 (Layout nativo) */
+@media screen and (width: 1920px) and (height: 1080px) {
+    .main-container {
+        transform: scale(1);
+    }
+}
+
+/* HD+ - 1600x900 - scala 0.83 */
+@media screen and (width: 1600px) and (height: 900px) {
+    .main-container {
+        transform: scale(0.83);
+    }
+}
+
+/* FWXGA - 1366x768 - scala 0.71 */
+@media screen and (width: 1366px) and (height: 768px) {
+    .main-container {
+        transform: scale(0.71);
+    }
+}
+
+/* HD - 1280x720 - scala 0.66 */
+@media screen and (width: 1280px) and (height: 720px) {
+    .main-container {
+        transform: scale(0.66);
+    }
+}
+
+/* WSVGA - 1024x576 - scala 0.53 */
+@media screen and (width: 1024px) and (height: 576px) {
+    .main-container {
+        transform: scale(0.53);
+    }
+}
+
+/* qHD - 960x540 - scala 0.5 */
+@media screen and (width: 960px) and (height: 540px) {
+    .main-container {
+        transform: scale(0.5);
+    }
+}
+
+/* FWVGA - 854x480 - scala 0.44 */
+@media screen and (width: 854px) and (height: 480px) {
+    .main-container {
+        transform: scale(0.44);
+    }
+}
+
+/* nHD - 640x360 - scala 0.33 */
+@media screen and (width: 640px) and (height: 360px) {
+    .main-container {
+        transform: scale(0.33);
+    }
+}
+
+/* Gestione aspect ratio più stretti di 16:9 (4:3, 5:4, ecc.) */
+@media screen and (max-aspect-ratio: 16/9) {
+    .main-container {
+        width: 100vw;
+        height: calc(100vw * 9 / 16);
+        top: 50%;
+        left: 0;
+        transform: translateY(-50%);
+    }
+}
+
+/* Gestione aspect ratio più larghi di 16:9 (21:9, ecc.) */
+@media screen and (min-aspect-ratio: 17/9) {
+    .main-container {
+        width: calc(100vh * 16 / 9);
+        height: 100vh;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+}
+
+/* Media queries per dispositivi mobili e tablet */
+@media (max-width: 768px) {
+    .main-section {
+        flex-direction: column;
+        padding: 10px;
+    }
+    
+    .menu-box {
+        width: 90%;
+        height: auto;
+        margin: 10px auto;
+    }
+    
+    .header-section h1 {
+        font-size: 4vh;
+    }
+    
+    .cutscene-main-section {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .left-column,
+    .right-column {
+        width: 100%;
+        height: auto;
+    }
+    
+    .challenge-left-column,
+    .challenge-right-column {
+        width: 100%;
+        padding: 1%;
+    }
+    
+    .central-area {
+        flex-direction: column;
+    }
+}
+
+/* Media queries per altezze ridotte */
+@media (max-height: 600px) {
+    .header-section {
+        height: 60px;
+    }
+    
+    .footer-section {
+        height: 40px;
+    }
+    
+    .image-container {
+        max-width: 50vh;
+    }
+    
+    .square-image-container {
+        max-width: 40vh;
+        max-height: 40vh;
+    }
+    
+    .menu-button {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+}

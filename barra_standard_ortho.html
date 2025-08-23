@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contenitore Trasparente</title>
+    <style>
+        /* Reset base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Elimina overflow e scrolling, sfondo nero per letterbox */
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #000;
+        }
+
+        /* Contenitore letterbox 16:9 - QUESTO è la chiave */
+        .letterbox-wrapper {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100vmin;
+            height: calc(100vmin * 9 / 16);
+            max-width: 100vw;
+            max-height: calc(100vw * 9 / 16);
+        }
+
+        /* Se la finestra è più alta che larga */
+        @media screen and (max-aspect-ratio: 16/9) {
+            .letterbox-wrapper {
+                width: 100vw;
+                height: calc(100vw * 9 / 16);
+            }
+        }
+
+        /* Se la finestra è più larga che alta */
+        @media screen and (min-aspect-ratio: 16/9) {
+            .letterbox-wrapper {
+                width: calc(100vh * 16 / 9);
+                height: 100vh;
+            }
+        }
+
+        /* Contenitore padre - SEMPRE 100% del letterbox wrapper */
+        .main-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background: transparent;
+        }
+
+        /* Elemento figlio identico al padre con immagine */
+        .child-container {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: transparent;
+        }
+
+        /* Stile per l'immagine */
+        .child-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: fill;
+        }
+
+        /* Overlay shadow sopra l'immagine */
+        .overlay-shadow {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: rgba(25, 20, 15, 0.8);
+        }
+
+        /* Layout container principale */
+        .layout-container {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+        }
+
+        /* Area principale - 95% dell'altezza */
+        .main-section {
+            width: 100%;
+            height: 95%;
+            display: flex;
+            flex-direction: row;
+        }
+
+        /* Contenitore meta sinistra - 50% larghezza, 100% altezza */
+        .meta_sinistra {
+            width: 50%;
+            height: 100%;
+            position: relative;
+            background: rgba(25, 20, 15, 0.8);
+        }
+
+        /* Box immagine quadrato - parte da (1%,1%) e occupa 84% larghezza */
+        .box_immagine {
+            position: absolute;
+            top: 4%;
+            left: 2%;
+            width: 84%;
+            aspect-ratio: 1;
+            background: rgba(25, 20, 15, 0.8);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Barra verticale - a destra del box immagine con spazio */
+        .barra_verticale {
+            position: absolute;
+            top: 1%;
+            left: 87%;
+            width: 12%;
+            height: 84%;
+            background: rgba(25, 20, 15, 0.8);
+            border-radius: 6px;
+        }
+
+        /* Barra inferiore - sotto box immagine */
+        .barra_inferiore {
+            position: absolute;
+            top: 86%;
+            left: 0%;
+            width: 100%;
+            height: 14%;
+            background: rgba(25, 20, 15, 0.8);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* Contenitore meta destra - 50% larghezza, 100% altezza */
+        .meta_destra {
+            width: 50%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            background: rgba(25, 20, 15, 0.8);
+        }
+
+        /* Contenitori orizzontali dentro meta_destra */
+        .destra_alto {
+            width: 100%;
+            height: 33.33%;
+            background: rgba(25, 20, 15, 0.8);
+            border-radius: 8px;
+            margin: 2px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .destra_centro {
+            width: 100%;
+            height: 33.33%;
+            background: rgba(25, 20, 15, 0.8);
+            border-radius: 8px;
+            margin: 2px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .destra_basso {
+            width: 100%;
+            height: 33.34%;
+            background: rgba(25, 20, 15, 0.8);
+            border-radius: 8px;
+            margin: 2px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Footer section - 5% dell'altezza */
+        .footer-section {
+            width: 100%;
+            height: 5%;
+            background: rgba(0, 0, 0, 0.8);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-family: Arial, sans-serif;
+            font-size: 1.5vmin;
+        }
+
+        /* Stile per il titolo del footer */
+        .footer-section h1 {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 1.8vmin;
+            font-weight: 700;
+            color: #ffffff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            letter-spacing: 1px;
+            margin: 0;
+            text-transform: uppercase;
+            position: relative;
+        }
+
+        /* Effetto di glow per il titolo */
+        .footer-section h1::before {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            color: rgba(255, 255, 255, 0.1);
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            z-index: -1;
+        }
+
+        /* Stili per le etichette delle variabili */
+        .variable-label {
+            color: #F5DEB3;
+            font-size: 2.5vmin;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.9);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Stili per i valori delle variabili */
+        .variable-value {
+            color: #98FB98;
+            font-size: 3vmin;
+            font-weight: bold;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.9);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Icona nella immagine quadrata */
+        .mission-icon {
+            font-size: 15vmin;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+            animation: mission-glow 3s infinite;
+        }
+
+        @keyframes mission-glow {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+        }
+
+        /* Status del gioco */
+        .game-status {
+            color: #FFD700 !important;
+            font-size: 2.4vmin;
+            text-align: center;
+            text-shadow: 3px 3px 8px rgba(0, 0, 0, 1), 0 0 20px rgba(255, 215, 0, 1);
+            line-height: 1.3;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            padding: 10px;
+            z-index: 1000;
+            opacity: 1 !important;
+        }
+
+        /* STILI AGGIUNTIVI PER IL GIOCO STEALTH */
+        
+        /* Barra di lockpicking personalizzata */
+        .lockpick-bar {
+            width: 100%;
+            height: 40px;
+            background: rgba(20, 15, 10, 0.9);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+            margin: 10px 0;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.8);
+        }
+
+        /* Sweet spot per lockpicking */
+        .lockpick-sweet-spot {
+            position: absolute;
+            height: 100%;
+            background: linear-gradient(135deg, #4682B4, #2F4F4F);
+            border-radius: 18px;
+            top: 0;
+            opacity: 0.9;
+            box-shadow: 0 0 25px rgba(70, 130, 180, 0.8), inset 0 2px 5px rgba(135, 206, 235, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        /* Thumb per lockpicking */
+        .lockpick-thumb {
+            position: absolute;
+            width: 26px;
+            height: 26px;
+            background: linear-gradient(135deg, #F5DEB3, #DEB887);
+            border-radius: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.8), 0 0 15px rgba(245, 222, 179, 0.6);
+            z-index: 100;
+        }
+
+        /* Barra di sospetto */
+        .suspicion-bar {
+            width: 100%;
+            height: 18px;
+            background: rgba(10, 5, 0, 0.9);
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 10px 0;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.8);
+        }
+
+        .suspicion-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #2ECC71, #F39C12, #E74C3C);
+            border-radius: 6px;
+            transition: width 0.5s ease;
+            width: 0%;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Barra di progresso */
+        .progress-bar {
+            width: 100%;
+            height: 18px;
+            background: rgba(10, 5, 0, 0.9);
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 10px 0;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.8);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4169E1, #1E90FF);
+            border-radius: 6px;
+            transition: width 0.5s ease;
+            width: 0%;
+            box-shadow: 0 0 15px rgba(30, 144, 255, 0.6);
+        }
+
+        /* Schermata di risultato */
+        .result-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .result-content {
+            background: rgba(20, 20, 20, 0.9);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            max-width: 600px;
+        }
+
+        .result-title {
+            font-size: 4vmin;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .result-success {
+            color: #2ECC71;
+        }
+
+        .result-failure {
+            color: #E74C3C;
+        }
+
+        .result-icon {
+            font-size: 8vmin;
+            margin: 20px 0;
+            animation: result-bounce 2s infinite;
+        }
+
+        @keyframes result-bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .result-message {
+            font-size: 2.2vmin;
+            margin: 20px 0;
+            line-height: 1.4;
+            color: rgba(255, 255, 255, 0.9);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .retry-button {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 2.5vmin;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.3s;
+            margin-top: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .retry-button:hover {
+            transform: scale(1.05);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="letterbox-wrapper">
+        <div class="main-container">
+            <!-- Elemento figlio identico al padre con immagine -->
+            <div class="child-container">
+                <img id="background-image" src="main_menu_bg.png" alt="Immagine di sfondo">
+            </div>
+            
+            <!-- Overlay shadow sopra l'immagine -->
+            <div class="overlay-shadow"></div>
+            
+            <!-- Layout container principale -->
+            <div class="layout-container">
+                <!-- Area centrale con meta sinistra e destra -->
+                <div class="main-section">
+                    <!-- Meta sinistra con i suoi contenitori -->
+                    <div class="meta_sinistra">
+                        <div class="box_immagine">
+                            <div class="mission-icon" id="missionIcon">🔓</div>
+                        </div>
+                        <div class="barra_verticale">
+                            <!-- Contenuto della barra verticale -->
+                        </div>
+                        <div class="barra_inferiore">
+                            <div class="game-status" id="game-status">
+                                <!-- Il testo viene caricato da JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Meta destra con i tre contenitori orizzontali -->
+                    <div class="meta_destra">
+                        <div class="destra_alto">
+                            <div style="display: flex; justify-content: center; align-items: center; height: 40%; background: rgba(15, 10, 5, 0.9); border-radius: 6px; margin-bottom: 5px;">
+                                <span style="color: #F5DEB3; font-size: 2.8vmin; font-weight: bold; text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.9); font-family: 'Segoe UI', sans-serif; text-transform: uppercase; letter-spacing: 2px;">🚨 LIVELLO SOSPETTO 🚨</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; height: 60%; padding: 0 15px;">
+                                <span class="variable-label">Sospetto:</span>
+                                <div style="display: flex; flex-direction: column; align-items: flex-end; flex: 1; margin-left: 20px;">
+                                    <span class="variable-value" id="suspicion-text">0/100</span>
+                                    <div class="suspicion-bar" style="width: 100%; margin-top: 8px;">
+                                        <div class="suspicion-fill" id="suspicion-fill"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="destra_centro">
+                            <div style="display: flex; justify-content: center; align-items: center; height: 40%; background: rgba(15, 10, 5, 0.9); border-radius: 6px; margin-bottom: 5px;">
+                                <span style="color: #98FB98; font-size: 2.8vmin; font-weight: bold; text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.9); font-family: 'Segoe UI', sans-serif; text-transform: uppercase; letter-spacing: 2px;">🔓 PROGRESSO SCASSO 🔓</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; height: 60%; padding: 0 15px;">
+                                <span class="variable-label">Progresso:</span>
+                                <div style="display: flex; flex-direction: column; align-items: flex-end; flex: 1; margin-left: 20px;">
+                                    <span class="variable-value" id="progress-counter">0/15</span>
+                                    <div class="progress-bar" style="width: 100%; margin-top: 8px;">
+                                        <div class="progress-fill" id="progress-fill"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="destra_basso">
+                            <div style="display: flex; justify-content: center; align-items: center; height: 40%; background: rgba(15, 10, 5, 0.9); border-radius: 6px; margin-bottom: 5px;">
+                                <span style="color: #FFD700; font-size: 2.8vmin; font-weight: bold; text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.9); font-family: 'Segoe UI', sans-serif; text-transform: uppercase; letter-spacing: 2px;">⚡ BARRA LOCKPICKING ⚡</span>
+                            </div>
+                            <div style="display: flex; align-items: center; height: 60%; padding: 0 15px;">
+                                <div style="width: 100%;">
+                                    <div class="lockpick-bar" id="lockpick-bar">
+                                        <div class="lockpick-sweet-spot" id="sweet-spot"></div>
+                                        <div class="lockpick-thumb" id="thumb"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Footer section -->
+                <div class="footer-section">
+                    <h1 data-text="🕵️ STEALTH MISSION - EAST GERMANY 🕵️">🕵️ STEALTH MISSION - EAST GERMANY 🕵️</h1>
+                </div>
+            </div>
+
+            <!-- Schermata risultato -->
+            <div id="result-screen" class="result-overlay hidden">
+                <div class="result-content">
+                    <div class="result-title" id="result-title"></div>
+                    <div class="result-icon" id="result-icon"></div>
+                    <div class="result-message" id="result-message"></div>
+                    <div id="result-buttons"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ================= CONFIGURAZIONE MISSIONE =================
+        /* 
+         * Per personalizzare la missione, modifica questo oggetto:
+         * - background.image: percorso dell'immagine di sfondo
+         * - texts: tutti i testi del gioco
+         */
+        const missionConfig = {
+            background: {
+                image: "stealth_mission_bg.png" // Cambia questo percorso per l'immagine di sfondo
+            },
+            texts: {
+                initialMessage: "Premi SPAZIO per iniziare la missione stealth!",
+                readyPhase: "INFILTRAZIONE INIZIATA - Ti avvicini alla porta...",
+                victoryAlert: "CONTINUA - Qui collegherai la cutscene successiva!"
+            }
+        };
+
+        class StealthLockpickGame {
+            constructor() {
+                this.gameActive = false;
+                this.waitingForStart = true; // Nuovo stato per l'attesa iniziale
+                this.thumbPosition = 0;
+                this.sweetSpotPosition = 50;
+                this.baseSweetSpotWidth = 15;
+                this.animationSpeed = 1.8;
+                this.direction = 1;
+                this.animationId = null;
+                this.phaseStartTime = 0;
+                this.phaseDuration = 3500;
+                this.waitingForNext = false;
+                this.missionFinished = false;
+                
+                // Mission stats
+                this.suspicionLevel = 0;
+                this.maxSuspicion = 100;
+                this.progressMade = 0;
+                this.targetProgress = 15;
+                this.suspicionIncrease = 15;
+                
+                this.loadMissionConfig();
+                this.setupEventListeners();
+                this.startMission();
+            }
+            
+            loadMissionConfig() {
+                // Carica l'immagine di sfondo
+                const backgroundImg = document.getElementById('background-image');
+                if (backgroundImg) {
+                    backgroundImg.src = missionConfig.background.image;
+                }
+                
+                // Carica il messaggio iniziale
+                const gameStatus = document.getElementById('game-status');
+                if (gameStatus) {
+                    gameStatus.textContent = missionConfig.texts.initialMessage;
+                }
+            }
+            
+            setupEventListeners() {
+                document.addEventListener('keydown', (e) => {
+                    if (e.code === 'Space') {
+                        e.preventDefault();
+                        
+                        if (this.waitingForStart) {
+                            // Prima pressione di SPAZIO: inizia la missione
+                            this.waitingForStart = false;
+                            this.showReadyPhase();
+                        } else if (this.gameActive && !this.waitingForNext) {
+                            // Durante il gioco: azione di lockpicking
+                            this.handleAction();
+                        }
+                    }
+                });
+            }
+            
+            startMission() {
+                // Mostra il messaggio iniziale e aspetta che il giocatore prema SPAZIO
+                this.showMessage(missionConfig.texts.initialMessage, 'instruction');
+                this.updateMissionIcon('🔓');
+                // Non usa setTimeout - aspetta l'input dell'utente
+            }
+            
+            showReadyPhase() {
+                this.updateMissionIcon('🎯');
+                this.showMessage(missionConfig.texts.readyPhase, 'instruction');
+                
+                setTimeout(() => {
+                    this.updateMissionIcon('🔓');
+                    this.startLockpicking();
+                }, 2000);
+            }
+            
+            updateMissionIcon(icon) {
+                document.getElementById('missionIcon').textContent = icon;
+            }
+            
+            startLockpicking() {
+                if (this.missionFinished) return;
+                
+                this.gameActive = true;
+                this.waitingForNext = false;
+                this.thumbPosition = 2; // FIX: Inizia da 2 invece di 5 per maggior precisione
+                this.direction = 1;
+                this.phaseStartTime = Date.now();
+                
+                // Calculate current sweet spot width based on suspicion
+                this.currentSweetSpotWidth = Math.max(5, this.baseSweetSpotWidth - (this.suspicionLevel / 100) * 10);
+                
+                // FIX: Posizionamento sweet spot più controllato con range esteso
+                const minPosition = 5;
+                const maxPosition = 90 - this.currentSweetSpotWidth;
+                this.sweetSpotPosition = minPosition + Math.random() * (maxPosition - minPosition);
+                
+                console.log('Starting lockpicking phase:', {
+                    suspicionLevel: this.suspicionLevel,
+                    sweetSpotPosition: this.sweetSpotPosition,
+                    sweetSpotWidth: this.currentSweetSpotWidth,
+                    progressMade: this.progressMade,
+                    targetProgress: this.targetProgress
+                });
+                
+                this.updateSweetSpot();
+                this.resetThumb();
+                this.updateStatus();
+                this.animate();
+            }
+            
+            updateStatus() {
+                const messages = [
+                    "Inserisci delicatamente gli strumenti nella serratura...",
+                    "Senti il click dei meccanismi interni...",
+                    "Concentrati sui suoni della serratura...",
+                    "Un movimento sbagliato e ti sentiranno...",
+                    "I denti della serratura stanno cedendo..."
+                ];
+                
+                const suspicionMessages = [
+                    "Stai facendo troppo rumore! Sii più attento!",
+                    "I vicini stanno diventando sospettosi!",
+                    "Qualcuno si sta avvicinando alla finestra!",
+                    "Senti passi nel corridoio!",
+                    "La Stasi potrebbe essere già in strada!"
+                ];
+                
+                let message;
+                let statusClass = '';
+                
+                if (this.suspicionLevel > 60) {
+                    message = suspicionMessages[Math.floor(Math.random() * suspicionMessages.length)];
+                    statusClass = 'status-alert';
+                    this.updateMissionIcon('🚨');
+                } else {
+                    message = messages[Math.floor(Math.random() * messages.length)];
+                    this.updateMissionIcon('🔓');
+                }
+                
+                this.showMessage(message, statusClass);
+            }
+            
+            updateSweetSpot() {
+                const sweetSpot = document.getElementById('sweet-spot');
+                sweetSpot.style.left = this.sweetSpotPosition + '%';
+                sweetSpot.style.width = this.currentSweetSpotWidth + '%';
+            }
+            
+            resetThumb() {
+                document.getElementById('thumb').style.left = '2%'; // FIX: Inizia da 2% per maggior precisione
+            }
+            
+            animate() {
+                if (!this.gameActive || this.missionFinished) return;
+                
+                this.thumbPosition += this.animationSpeed * this.direction;
+                
+                // FIX: Limiti estesi da 2% a 95% per coprire tutta la barra
+                if (this.thumbPosition >= 95) {
+                    this.direction = -1;
+                    this.thumbPosition = 95;
+                } else if (this.thumbPosition <= 2) {
+                    this.direction = 1;
+                    this.thumbPosition = 2;
+                }
+                
+                document.getElementById('thumb').style.left = this.thumbPosition + '%';
+                
+                if (Date.now() - this.phaseStartTime > this.phaseDuration) {
+                    this.timeOut();
+                    return;
+                }
+                
+                this.animationId = requestAnimationFrame(() => this.animate());
+            }
+            
+            handleAction() {
+                const sweetSpotStart = this.sweetSpotPosition;
+                const sweetSpotEnd = this.sweetSpotPosition + this.currentSweetSpotWidth;
+                
+                // FIX: Calcolo di precisione migliorato con tolleranza dinamica basata sulla difficoltà
+                const baseTolerance = 1.5;
+                const difficultyMultiplier = Math.max(0.5, 1 - (this.suspicionLevel / 200)); // Più facile quando il sospetto è basso
+                const tolerance = baseTolerance * difficultyMultiplier;
+                
+                const isInSweetSpot = (this.thumbPosition >= (sweetSpotStart - tolerance)) && 
+                                     (this.thumbPosition <= (sweetSpotEnd + tolerance));
+                
+                console.log('Action triggered:', {
+                    thumbPosition: this.thumbPosition,
+                    sweetSpotStart: sweetSpotStart,
+                    sweetSpotEnd: sweetSpotEnd,
+                    sweetSpotWidth: this.currentSweetSpotWidth,
+                    tolerance: tolerance,
+                    isInSweetSpot: isInSweetSpot
+                });
+                
+                // FERMA l'animazione corrente prima di processare l'azione
+                if (this.animationId) {
+                    cancelAnimationFrame(this.animationId);
+                    this.animationId = null;
+                }
+                
+                this.gameActive = false;
+                this.waitingForNext = true;
+                
+                this.processAction(isInSweetSpot);
+            }
+            
+            processAction(success) {
+                if (success) {
+                    // Successful lockpick
+                    this.progressMade++;
+                    const successMessages = [
+                        "CLICK! Perfetto! Un dente della serratura cede!",
+                        "SILENZIOSO! Hai fatto progressi senza rumore!",
+                        "PRECISIONE! Il meccanismo si sta aprendo!",
+                        "ECCELLENTE! Stai dominando la serratura!",
+                        "MAESTRIA! Come un vero scassinatore!"
+                    ];
+                    const randomMessage = successMessages[Math.floor(Math.random() * successMessages.length)];
+                    this.showMessage(randomMessage, 'success');
+                    this.updateMissionIcon('✅');
+                } else {
+                    // Failed lockpick
+                    this.suspicionLevel = Math.min(this.maxSuspicion, this.suspicionLevel + this.suspicionIncrease);
+                    const failMessages = [
+                        "CLANK! Hai fatto rumore! Qualcuno l'ha sentito!",
+                        "SCRITCH! Gli strumenti scivolano rumorosamente!",
+                        "BANG! Un suono metallico echeggia nel corridoio!",
+                        "CRACK! La serratura protesta rumorosamente!",
+                        "SCREECH! Il metallo stride contro metallo!"
+                    ];
+                    const randomMessage = failMessages[Math.floor(Math.random() * failMessages.length)];
+                    this.showMessage(randomMessage, 'status-alert');
+                    this.updateMissionIcon('❌');
+                }
+                
+                this.updateDisplay();
+                
+                // FIX: Controlla fine missione e ritorna true se finita
+                if (this.checkMissionEnd()) {
+                    return;
+                }
+                
+                // Breve pausa per mostrare dove ha centrato il click
+                setTimeout(() => {
+                    if (!this.missionFinished) {
+                        this.startLockpicking();
+                    }
+                }, 300);
+            }
+            
+            timeOut() {
+                // FERMA l'animazione corrente prima del timeout
+                if (this.animationId) {
+                    cancelAnimationFrame(this.animationId);
+                    this.animationId = null;
+                }
+                
+                this.gameActive = false;
+                this.waitingForNext = true;
+                
+                this.suspicionLevel = Math.min(this.maxSuspicion, this.suspicionLevel + this.suspicionIncrease);
+                this.showMessage("TROPPO LENTO! I rumori del tentativo prolungato attirano attenzione!", 'status-alert');
+                this.updateMissionIcon('⏰');
+                
+                this.updateDisplay();
+                
+                if (this.checkMissionEnd()) {
+                    return;
+                }
+                
+                // Breve pausa per mostrare dove ha centrato il click
+                setTimeout(() => {
+                    if (!this.missionFinished) {
+                        this.startLockpicking();
+                    }
+                }, 300);
+            }
+            
+            updateDisplay() {
+                // Update suspicion bar
+                const suspicionPercentage = (this.suspicionLevel / this.maxSuspicion) * 100;
+                document.getElementById('suspicion-fill').style.width = suspicionPercentage + '%';
+                document.getElementById('suspicion-text').textContent = `${this.suspicionLevel}/${this.maxSuspicion}`;
+                
+                // Update progress counter and bar
+                const progressPercentage = (this.progressMade / this.targetProgress) * 100;
+                document.getElementById('progress-counter').textContent = `${this.progressMade}/${this.targetProgress}`;
+                document.getElementById('progress-fill').style.width = progressPercentage + '%';
+            }
+            
+            // FIX: Ritorna boolean per controllo corretto
+            checkMissionEnd() {
+                if (this.suspicionLevel >= this.maxSuspicion) {
+                    this.endMission('failure');
+                    return true;
+                } else if (this.progressMade >= this.targetProgress) {
+                    this.endMission('success');
+                    return true;
+                }
+                return false;
+            }
+            
+            endMission(result) {
+                this.missionFinished = true;
+                this.gameActive = false;
+                
+                if (this.animationId) {
+                    cancelAnimationFrame(this.animationId);
+                }
+                
+                this.showResult(result);
+            }
+            
+            showResult(result) {
+                const resultTitle = document.getElementById('result-title');
+                const resultIcon = document.getElementById('result-icon');
+                const resultMessage = document.getElementById('result-message');
+                const resultButtons = document.getElementById('result-buttons');
+                
+                if (result === 'success') {
+                    resultTitle.textContent = "MISSIONE COMPIUTA!";
+                    resultTitle.className = "result-title result-success";
+                    resultIcon.textContent = "🎯";
+                    resultMessage.textContent = `SUCCESSO! Hai scassinato la serratura con ${this.progressMade}/15 click completati! Livello di sospetto finale: ${this.suspicionLevel}/100. Sei riuscito a infiltrarti senza essere scoperto. Agente perfetto!`;
+                    this.updateMissionIcon('🏆');
+                    
+                    // Pulsante CONTINUA per la vittoria
+                    resultButtons.innerHTML = `
+                        <button class="retry-button" onclick="continueToNextScene()" style="background: linear-gradient(135deg, #27ae60, #229954);">CONTINUA</button>
+                    `;
+                } else {
+                    resultTitle.textContent = "MISSIONE FALLITA!";
+                    resultTitle.className = "result-title result-failure";
+                    resultIcon.textContent = "🚨";
+                    resultMessage.textContent = `SCOPERTO! Il tuo livello di sospetto ha raggiunto il massimo. Hai completato solo ${this.progressMade}/15 click prima di essere individuato. Le autorità della Germania Est sono in arrivo. Fuga immediata!`;
+                    this.updateMissionIcon('💥');
+                    
+                    // Pulsante NUOVA MISSIONE per la sconfitta
+                    resultButtons.innerHTML = `
+                        <button class="retry-button" onclick="restartMission()">NUOVA MISSIONE?</button>
+                    `;
+                }
+                
+                document.getElementById('result-screen').classList.remove('hidden');
+            }
+            
+            showMessage(message, statusClass) {
+                const statusDiv = document.getElementById('game-status');
+                statusDiv.textContent = message;
+                if (statusClass === 'status-alert') {
+                    statusDiv.style.color = '#E74C3C';
+                } else {
+                    statusDiv.style.color = '#FFD700';
+                }
+            }
+        }
+        
+        let game;
+        
+        function startGame() {
+            game = new StealthLockpickGame();
+        }
+        
+        function restartMission() {
+            // Hide result screen
+            document.getElementById('result-screen').classList.add('hidden');
+            
+            // Reset displays
+            document.getElementById('suspicion-fill').style.width = '0%';
+            document.getElementById('suspicion-text').textContent = '0/100';
+            document.getElementById('progress-counter').textContent = '0/15';
+            document.getElementById('progress-fill').style.width = '0%';
+            document.getElementById('missionIcon').textContent = '🔓';
+            
+            // Reset background image
+            const backgroundImg = document.getElementById('background-image');
+            if (backgroundImg) {
+                backgroundImg.src = missionConfig.background.image;
+            }
+            
+            startGame();
+        }
+        
+        // Funzione per continuare alla cutscene successiva (da personalizzare)
+        function continueToNextScene() {
+            // Nascondi la schermata di risultato
+            document.getElementById('result-screen').classList.add('hidden');
+            
+            // Qui puoi aggiungere il codice per passare alla cutscene successiva
+            // Ad esempio:
+            // window.location.href = 'cutscene_success.html';
+            // oppure chiamare una funzione che gestisce il cambio scena
+            
+            alert(missionConfig.texts.victoryAlert);
+            
+            // Placeholder: per ora riavvia il gioco
+            restartMission();
+        }
+        
+        window.addEventListener('load', startGame);
+    </script>
+</body>
+</html>

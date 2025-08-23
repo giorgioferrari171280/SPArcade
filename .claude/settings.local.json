@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python:*)",
+      "Read(//mnt/c/Users/Giorgio/OneDrive/Documenti/PROGRAMMARE CON L''''''''IA/GIOCHI ARCADE/**)"
+    ],
+    "deny": [],
+    "ask": [],
+    "additionalDirectories": [
+      "/mnt/c/Users/Giorgio/OneDrive/Documenti/PROGRAMMARE CON L''''IA/GIOCHI ARCADE"
+    ]
+  }
+}

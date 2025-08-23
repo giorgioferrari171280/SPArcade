@@ -1,0 +1,41 @@
+<div id="skill-challenge-combat-section" class="spa-section">
+    <div class="letterbox-wrapper">
+        <div class="main-container">
+            <div class="layout-container">
+         <header class="challenge-header-section"><h1 data-text="DUELLO ALL'ULTIMO SANGUE ">DUELLO ALL'ULTIMO SANGUE </h1></header>
+         <div class="central-area">
+             <div class="challenge-left-column">
+                <div class="square-image-container"><div class="mission-icon" id="missionIcon-combat">⚔️</div></div>
+                <div class="text-box"><div class="game-status" id="game-status-combat"></div></div>
+            </div>
+            <div class="challenge-right-column">
+                <div class="right-top-band-timer">
+                     <span class="variable-label">Tempo:</span>
+                    <div style="display: flex; flex-direction: column; align-items: flex-end; flex: 1; margin-left: 20px;">
+                        <span class="timer-value" id="timer-text-combat">3:00</span>
+                        <div class="timer-bar" style="width: 100%; margin-top: 8px;"><div class="timer-fill" id="timer-fill-combat"></div></div>
+                    </div>
+                </div>
+                <div class="right-center-band-combat">
+                    <div class="combat-bar-label attack">🔥 ATTACCA 🔥</div>
+                    <div class="combat-counter"><span class="combat-counter-label">Colpi a Segno:</span><span class="combat-counter-value attack" id="attack-counter">0/15</span></div>
+                    <div class="progress-bar"><div class="progress-fill attack" id="attack-progress"></div></div>
+                    <div class="lockpick-bar" id="attack-bar"><div class="lockpick-sweet-spot attack" id="attack-sweet-spot"></div><div class="lockpick-thumb" id="attack-thumb"></div></div>
+                </div>
+                <div class="right-bottom-band-combat">
+                    <div class="combat-bar-label defend">🛡️ DIFENDI 🛡️</div>
+                    <div class="combat-counter"><span class="combat-counter-label">Resistenza:</span><span class="combat-counter-value defend" id="defend-counter">15/15</span></div>
+                    <div class="progress-bar"><div class="progress-fill defend" id="defend-progress"></div></div>
+                    <div class="lockpick-bar" id="defend-bar"><div class="lockpick-sweet-spot defend" id="defend-sweet-spot"></div><div class="lockpick-thumb" id="defend-thumb"></div></div>
+                </div>
+            </div>
+         </div>
+         <footer class="game-ui-footer-section"><div class="footer-left"><button class="back-button" onclick="backToMainMenu()">🏃 RITIRATA</button></div></footer>
+            </div>
+            
+            <div id="result-screen-combat" class="result-overlay hidden">
+                <div class="result-content"><div class="result-title" id="result-title-combat"></div><div class="result-icon" id="result-icon-combat"></div><div class="result-message" id="result-message-combat"></div><div id="result-buttons-combat"></div></div>
+            </div>
+        </div>
+    </div>
+</div>

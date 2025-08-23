@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contenitore Trasparente</title>
+    <style>
+        /* Reset base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Elimina overflow e scrolling, sfondo nero per letterbox */
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #000;
+        }
+
+        /* Contenitore letterbox 16:9 - QUESTO è la chiave */
+        .letterbox-wrapper {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100vmin;
+            height: calc(100vmin * 9 / 16);
+            max-width: 100vw;
+            max-height: calc(100vw * 9 / 16);
+        }
+
+        /* Se la finestra è più alta che larga */
+        @media screen and (max-aspect-ratio: 16/9) {
+            .letterbox-wrapper {
+                width: 100vw;
+                height: calc(100vw * 9 / 16);
+            }
+        }
+
+        /* Se la finestra è più larga che alta */
+        @media screen and (min-aspect-ratio: 16/9) {
+            .letterbox-wrapper {
+                width: calc(100vh * 16 / 9);
+                height: 100vh;
+            }
+        }
+
+        /* Contenitore padre - SEMPRE 100% del letterbox wrapper */
+        .main-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background: transparent;
+        }
+
+        /* Elemento figlio identico al padre con immagine */
+        .child-container {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: transparent;
+        }
+
+        /* Stile per l'immagine */
+        .child-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: fill;
+        }
+
+        /* Overlay shadow sopra l'immagine */
+        .overlay-shadow {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: rgba(25, 20, 15, 0.8);
+        }
+
+        /* Layout container principale */
+        .layout-container {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+        }
+
+        /* Area principale - 95% dell'altezza */
+        .main-section {
+            width: 100%;
+            height: 95%;
+            display: flex;
+            flex-direction: row;
+        }
+
+        /* Contenitore meta sinistra - 50% larghezza, 100% altezza */
+        .meta_sinistra {
+            width: 50%;
+            height: 100%;
+            position: relative;
+            background: rgba(25, 20, 15, 0.8);
+        }
+
+        /* Box immagine quadrato - parte da (1%,1%) e occupa 84% larghezza */
+        .box_immagine {
+            position: absolute;
+            top: 4%;
+            left: 2%;
+            width: 84%;
+            aspect-ratio: 1;
+            background: rgba(25, 20, 15, 0.8);
+            border-radius: 8px;
+        }
+
+        /* Barra verticale - a destra del box immagine con spazio */
+        .barra_verticale {
+            position: absolute;
+            top: 1%;
+            left: 87%;
+            width: 12%;
+            height: 84%;
+            background: rgba(25, 20, 15, 0.8);
+            border-radius: 6px;
+        }
+
+        /* Barra inferiore - sotto box immagine */
+        .barra_inferiore {
+            position: absolute;
+            top: 86%;
+            left: 0%;
+            width: 100%;
+            height: 14%;
+            background: rgba(25, 20, 15, 0.8);
+            border-radius: 8px;
+        }
+
+        /* Contenitore didascalia */
+        .contenitore_didascalia {
+            position: absolute;
+            top: 86%;
+            left: 0%;
+            width: 100%;
+            height: 14%;
+            background: rgba(25, 20, 15, 0.8);
+            border-radius: 8px;
+        }
+
+        /* Contenitore meta destra - 50% larghezza, 100% altezza */
+        .meta_destra {
+            width: 50%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            background: rgba(25, 20, 15, 0.8);
+        }
+
+        /* Contenitori orizzontali dentro meta_destra */
+        .destra_alto {
+            width: 100%;
+            height: 33.33%;
+            background: rgba(25, 20, 15, 0.8);
+            border-radius: 8px;
+            margin: 2px;
+        }
+
+        .destra_centro {
+            width: 100%;
+            height: 33.33%;
+            background: rgba(25, 20, 15, 0.8);
+            border-radius: 8px;
+            margin: 2px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .destra_basso {
+            width: 100%;
+            height: 33.34%;
+            background: rgba(25, 20, 15, 0.8);
+            border-radius: 8px;
+            margin: 2px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* NUOVI ELEMENTI AGGIUNTI */
+
+        /* Metà superiore di destra_centro - per testo */
+        .destra_centro_top {
+            width: 100%;
+            height: 50%;
+            background: rgba(25, 20, 15, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+        }
+
+        /* Box di testo per destra_centro_top */
+        .text_box_centro {
+            width: 90%;
+            height: 80%;
+            background: rgba(25, 20, 15, 0.8);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+        }
+
+        .text_box_centro p {
+            color: #FFF8DC;
+            font-family: 'Arial Black', Arial, sans-serif;
+            font-size: 2.2vmin;
+            font-weight: bold;
+            text-align: center;
+            line-height: 1.3;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.9);
+            letter-spacing: 0.5px;
+        }
+
+        /* Metà inferiore di destra_centro - per box rettangolare */
+        .destra_centro_bottom {
+            width: 100%;
+            height: 50%;
+            background: rgba(25, 20, 15, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+        }
+
+        /* Box rettangolare per destra_centro_bottom */
+        .rect_box_centro {
+            width: 85%;
+            height: 70%;
+            background: rgba(25, 20, 15, 0.8);
+            border-radius: 12px;
+        }
+
+        /* Metà superiore di destra_basso - per testo */
+        .destra_basso_top {
+            width: 100%;
+            height: 50%;
+            background: rgba(25, 20, 15, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+        }
+
+        /* Box di testo per destra_basso_top */
+        .text_box_basso {
+            width: 90%;
+            height: 80%;
+            background: rgba(25, 20, 15, 0.8);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+        }
+
+        .text_box_basso p {
+            color: #F0F8FF;
+            font-family: 'Arial Black', Arial, sans-serif;
+            font-size: 2.2vmin;
+            font-weight: bold;
+            text-align: center;
+            line-height: 1.3;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.9);
+            letter-spacing: 0.5px;
+        }
+
+        /* Metà inferiore di destra_basso - per box rettangolare */
+        .destra_basso_bottom {
+            width: 100%;
+            height: 50%;
+            background: rgba(25, 20, 15, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+        }
+
+        /* Box rettangolare per destra_basso_bottom */
+        .rect_box_basso {
+            width: 85%;
+            height: 70%;
+            background: rgba(25, 20, 15, 0.8);
+            border-radius: 12px;
+        }
+
+        /* Footer section - 5% dell'altezza */
+        .footer-section {
+            width: 100%;
+            height: 5%;
+            background: rgba(0, 0, 0, 0.8);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-family: Arial, sans-serif;
+            font-size: 1.5vmin;
+        }
+
+        /* STILI AGGIUNTI PER IL GIOCO */
+
+        /* Icona nella immagine quadrata */
+        .mission-icon {
+            font-size: 15vmin;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+            animation: mission-glow 3s infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        @keyframes mission-glow {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+        }
+
+        /* Status del gioco */
+        .game-status {
+            color: #FFD700 !important;
+            font-size: 2.4vmin;
+            text-align: center;
+            text-shadow: 3px 3px 8px rgba(0, 0, 0, 1), 0 0 20px rgba(255, 215, 0, 1);
+            line-height: 1.3;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            padding: 10px;
+            z-index: 1000;
+            opacity: 1 !important;
+        }
+
+        /* Timer nella sezione destra alto */
+        .timer-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            padding: 15px;
+        }
+
+        .variable-label {
+            color: #F5DEB3;
+            font-size: 2.5vmin;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.9);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .timer-value {
+            color: #98FB98;
+            font-size: 3vmin;
+            font-weight: bold;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.9);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: color 0.3s ease;
+        }
+
+        .timer-value.warning {
+            color: #FFD700;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.9);
+        }
+
+        .timer-value.danger {
+            color: #FF6347;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.9);
+        }
+
+        .timer-bar {
+            width: 100%;
+            height: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            margin-top: 8px;
+        }
+
+        .timer-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #98FB98, #FFD700, #FF6347);
+            border-radius: 7px;
+            transition: width 0.5s ease;
+            width: 100%;
+            box-shadow: 0 0 10px rgba(152, 251, 152, 0.5);
+        }
+
+        /* Combat labels */
+        .combat-bar-label {
+            color: #FFF8DC;
+            font-size: 2.8vmin;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.9);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .combat-bar-label.attack {
+            color: #FF4500;
+            text-shadow: 0 0 15px rgba(255, 69, 0, 0.8), 3px 3px 6px rgba(0, 0, 0, 0.9);
+        }
+
+        .combat-bar-label.defend {
+            color: #4682B4;
+            text-shadow: 0 0 15px rgba(70, 130, 180, 0.8), 3px 3px 6px rgba(0, 0, 0, 0.9);
+        }
+
+        .combat-counter-value {
+            font-size: 2.8vmin;
+            font-weight: bold;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.9);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .combat-counter-value.attack {
+            color: #FF6347;
+            text-shadow: 0 0 10px rgba(255, 99, 71, 0.7), 3px 3px 6px rgba(0, 0, 0, 0.9);
+        }
+
+        .combat-counter-value.defend {
+            color: #87CEEB;
+            text-shadow: 0 0 10px rgba(135, 206, 235, 0.7), 3px 3px 6px rgba(0, 0, 0, 0.9);
+        }
+
+        /* Barra di lockpicking personalizzata */
+        .lockpick-bar {
+            width: 100%;
+            height: 40px;
+            background: rgba(20, 15, 10, 0.9);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+            margin: 10px 0;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.8);
+        }
+
+        /* Sweet spot per lockpicking */
+        .lockpick-sweet-spot {
+            position: absolute;
+            height: 100%;
+            background: linear-gradient(135deg, #4682B4, #2F4F4F);
+            border-radius: 18px;
+            top: 0;
+            opacity: 0.9;
+            box-shadow: 0 0 25px rgba(70, 130, 180, 0.8), inset 0 2px 5px rgba(135, 206, 235, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .lockpick-sweet-spot.attack {
+            background: linear-gradient(135deg, #CD853F, #8B4513);
+            box-shadow: 0 0 25px rgba(255, 140, 0, 0.8), inset 0 2px 5px rgba(255, 165, 0, 0.5);
+        }
+
+        .lockpick-sweet-spot.defend {
+            background: linear-gradient(135deg, #4682B4, #2F4F4F);
+            box-shadow: 0 0 25px rgba(70, 130, 180, 0.8), inset 0 2px 5px rgba(135, 206, 235, 0.5);
+        }
+
+        /* Thumb per lockpicking */
+        .lockpick-thumb {
+            position: absolute;
+            width: 26px;
+            height: 26px;
+            background: linear-gradient(135deg, #F5DEB3, #DEB887);
+            border-radius: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.8), 0 0 15px rgba(245, 222, 179, 0.6);
+            z-index: 100;
+        }
+
+        /* Barra di progresso generica */
+        .progress-bar {
+            width: 100%;
+            height: 18px;
+            background: rgba(10, 5, 0, 0.9);
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 10px 0;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.8);
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 6px;
+            transition: width 0.5s ease;
+            width: 0%;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .progress-fill.attack {
+            background: linear-gradient(90deg, #FF8C00, #FF4500);
+            box-shadow: 0 0 15px rgba(255, 69, 0, 0.6);
+        }
+
+        .progress-fill.defend {
+            background: linear-gradient(90deg, #4169E1, #1E90FF);
+            box-shadow: 0 0 15px rgba(30, 144, 255, 0.6);
+        }
+
+        /* Schermata di risultato */
+        .result-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .result-content {
+            background: rgba(20, 20, 20, 0.9);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            max-width: 600px;
+        }
+
+        .result-title {
+            font-size: 4vmin;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .result-success {
+            color: #2ECC71;
+        }
+
+        .result-failure {
+            color: #E74C3C;
+        }
+
+        .result-icon {
+            font-size: 8vmin;
+            margin: 20px 0;
+            animation: result-bounce 2s infinite;
+        }
+
+        @keyframes result-bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .result-message {
+            font-size: 2.2vmin;
+            margin: 20px 0;
+            line-height: 1.4;
+            color: rgba(255, 255, 255, 0.9);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .retry-button {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 2.5vmin;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.3s;
+            margin-top: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .retry-button:hover {
+            transform: scale(1.05);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="letterbox-wrapper">
+        <div class="main-container">
+            <!-- Elemento figlio identico al padre con immagine -->
+            <div class="child-container">
+                <img id="background-image" src="main_menu_bg.png" alt="Immagine di sfondo">
+            </div>
+            
+            <!-- Overlay shadow sopra l'immagine -->
+            <div class="overlay-shadow"></div>
+            
+            <!-- Layout container principale -->
+            <div class="layout-container">
+                <!-- Area centrale con meta sinistra e destra -->
+                <div class="main-section">
+                    <!-- Meta sinistra con i suoi contenitori -->
+                    <div class="meta_sinistra">
+                        <div class="box_immagine">
+                            <div class="mission-icon" id="missionIcon">⚔️</div>
+                        </div>
+                        <div class="barra_verticale">
+                            <!-- Timer verticale o altre informazioni -->
+                        </div>
+                        <div class="barra_inferiore">
+                            <div class="game-status" id="game-status">
+                                <!-- Il testo viene caricato da JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Meta destra con i tre contenitori orizzontali -->
+                    <div class="meta_destra">
+                        <div class="destra_alto">
+                            <div class="timer-section">
+                                <span class="variable-label">⏰ Tempo:</span>
+                                <div style="display: flex; flex-direction: column; align-items: flex-end; flex: 1; margin-left: 20px;">
+                                    <span class="timer-value" id="timer-text">3:00</span>
+                                    <div class="timer-bar" style="width: 100%;">
+                                        <div class="timer-fill" id="timer-fill"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="destra_centro">
+                            <!-- NUOVA SEZIONE: Metà superiore con testo -->
+                            <div class="destra_centro_top">
+                                <div class="text_box_centro">
+                                    <p class="combat-bar-label attack">🔥 ATTACCA 🔥</p>
+                                </div>
+                                <span class="combat-counter-value attack" id="attack-counter">0/15</span>
+                            </div>
+                            <!-- NUOVA SEZIONE: Metà inferiore con box rettangolare -->
+                            <div class="destra_centro_bottom">
+                                <div class="rect_box_centro">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill attack" id="attack-progress"></div>
+                                    </div>
+                                    <div class="lockpick-bar" id="attack-bar">
+                                        <div class="lockpick-sweet-spot attack" id="attack-sweet-spot"></div>
+                                        <div class="lockpick-thumb" id="attack-thumb"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="destra_basso">
+                            <!-- NUOVA SEZIONE: Metà superiore con testo -->
+                            <div class="destra_basso_top">
+                                <div class="text_box_basso">
+                                    <p class="combat-bar-label defend">🛡️ DIFENDI 🛡️</p>
+                                </div>
+                                <span class="combat-counter-value defend" id="defend-counter">15/15</span>
+                            </div>
+                            <!-- NUOVA SEZIONE: Metà inferiore con box rettangolare -->
+                            <div class="destra_basso_bottom">
+                                <div class="rect_box_basso">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill defend" id="defend-progress"></div>
+                                    </div>
+                                    <div class="lockpick-bar" id="defend-bar">
+                                        <div class="lockpick-sweet-spot defend" id="defend-sweet-spot"></div>
+                                        <div class="lockpick-thumb" id="defend-thumb"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Footer section -->
+                <div class="footer-section">
+                    <p>⚔️ STEALTH COMBAT - DUAL PHASE ⚔️</p>
+                </div>
+            </div>
+
+            <!-- Schermata risultato -->
+            <div id="result-screen" class="result-overlay hidden">
+                <div class="result-content">
+                    <div class="result-title" id="result-title"></div>
+                    <div class="result-icon" id="result-icon"></div>
+                    <div class="result-message" id="result-message"></div>
+                    <div id="result-buttons"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ================= CONFIGURAZIONE MISSIONE =================
+        const missionConfig = {
+            background: {
+                image: "stealth_mission_bg.png"
+            },
+            texts: {
+                initialMessage: "Premi SPAZIO per iniziare il combattimento stealth!",
+                readyPhase: "COMBATTIMENTO INIZIATO - Prepara attacco e difesa...",
+                victoryAlert: "CONTINUA - Hai dominato il campo di battaglia!"
+            }
+        };
+
+        class StealthCombatGame {
+            constructor() {
+                this.gameActive = false;
+                this.waitingForStart = true;
+                this.currentPhase = 'attack';
+                this.thumbPosition = 2;
+                this.sweetSpotPosition = 50;
+                this.baseSweetSpotWidth = 15;
+                this.animationSpeed = 2.5;
+                this.direction = 1;
+                this.animationId = null;
+                this.phaseStartTime = 0;
+                this.phaseDuration = 5000;
+                this.waitingForNext = false;
+                this.missionFinished = false;
+                
+                this.attackScore = 0;
+                this.maxAttackScore = 15;
+                this.defendScore = 15;
+                this.maxDefendScore = 15;
+                
+                this.missionTimeLeft = 180;
+                this.maxMissionTime = 180;
+                this.missionTimer = null;
+                
+                this.loadMissionConfig();
+                this.setupEventListeners();
+                this.startMission();
+            }
+            
+            loadMissionConfig() {
+                const backgroundImg = document.getElementById('background-image');
+                if (backgroundImg) {
+                    backgroundImg.src = missionConfig.background.image;
+                }
+                
+                const gameStatus = document.getElementById('game-status');
+                if (gameStatus) {
+                    gameStatus.textContent = missionConfig.texts.initialMessage;
+                }
+            }
+            
+            setupEventListeners() {
+                document.addEventListener('keydown', (e) => {
+                    if (e.code === 'Space') {
+                        e.preventDefault();
+                        
+                        if (this.waitingForStart) {
+                            this.waitingForStart = false;
+                            this.showReadyPhase();
+                        } else if (this.gameActive && !this.waitingForNext) {
+                            this.handleAction();
+                        }
+                    }
+                });
+            }
+            
+            startMission() {
+                this.showMessage(missionConfig.texts.initialMessage, 'instruction');
+                this.updateMissionIcon('⚔️');
+                this.updateDisplay();
+            }
+            
+            showReadyPhase() {
+                this.updateMissionIcon('🎯');
+                this.showMessage(missionConfig.texts.readyPhase, 'instruction');
+                this.startMissionTimer();
+                
+                setTimeout(() => {
+                    this.updateMissionIcon('⚔️');
+                    this.startCombatPhase();
+                }, 2000);
+            }
+            
+            startMissionTimer() {
+                this.missionTimer = setInterval(() => {
+                    this.missionTimeLeft--;
+                    this.updateMissionTimerDisplay();
+                    
+                    if (this.missionTimeLeft <= 0) {
+                        this.endMissionByTimer();
+                    }
+                }, 1000);
+            }
+            
+            updateMissionTimerDisplay() {
+                const minutes = Math.floor(this.missionTimeLeft / 60);
+                const seconds = this.missionTimeLeft % 60;
+                const timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                
+                document.getElementById('timer-text').textContent = timeString;
+                
+                const percentage = (this.missionTimeLeft / this.maxMissionTime) * 100;
+                document.getElementById('timer-fill').style.width = percentage + '%';
+                
+                const timerText = document.getElementById('timer-text');
+                if (this.missionTimeLeft <= 30) {
+                    timerText.className = 'timer-value danger';
+                } else if (this.missionTimeLeft <= 60) {
+                    timerText.className = 'timer-value warning';
+                } else {
+                    timerText.className = 'timer-value';
+                }
+            }
+            
+            endMissionByTimer() {
+                if (this.missionTimer) {
+                    clearInterval(this.missionTimer);
+                }
+                
+                if (this.attackScore > this.defendScore) {
+                    this.endMission('time_victory');
+                } else if (this.defendScore > this.attackScore) {
+                    this.endMission('time_defeat');
+                } else {
+                    this.endMission('time_victory');
+                }
+            }
+            
+            updateMissionIcon(icon) {
+                document.getElementById('missionIcon').textContent = icon;
+            }
+            
+            startCombatPhase() {
+                if (this.missionFinished) return;
+                
+                this.gameActive = true;
+                this.waitingForNext = false;
+                this.thumbPosition = 2;
+                this.direction = 1;
+                this.phaseStartTime = Date.now();
+                
+                this.currentPhase = (this.currentPhase === 'attack') ? 'defend' : 'attack';
+                
+                const totalProgress = this.attackScore + (this.maxDefendScore - this.defendScore);
+                this.currentSweetSpotWidth = Math.max(8, this.baseSweetSpotWidth - (totalProgress * 0.5));
+                
+                const minPosition = 5;
+                const maxPosition = 95 - this.currentSweetSpotWidth;
+                this.sweetSpotPosition = minPosition + Math.random() * (maxPosition - minPosition);
+                
+                this.updateSweetSpot();
+                this.resetThumb();
+                this.updateStatus();
+                this.animate();
+            }
+            
+            updateStatus() {
+                const attackMessages = [
+                    "🔥 FASE ATTACCO: Colpisci nel momento giusto!",
+                    "⚔️ ATTACCA: Trova l'apertura nella difesa nemica!",
+                    "💥 OFFENSIVA: Preciso e letale!",
+                    "🎯 MIRA: Concentrati sul bersaglio!",
+                    "⚡ STRIKE: Veloce come un fulmine!"
+                ];
+                
+                const defendMessages = [
+                    "🛡️ FASE DIFESA: Para l'attacco nemico!",
+                    "⚔️ DIFENDI: Blocca ogni colpo in arrivo!",
+                    "💪 RESISTENZA: Mantieni la guardia alta!",
+                    "🏰 FORTEZZA: Inespugnabile come una roccia!",
+                    "🌊 DEFLETTI: Fluido come l'acqua!"
+                ];
+                
+                let message;
+                
+                if (this.currentPhase === 'attack') {
+                    message = attackMessages[Math.floor(Math.random() * attackMessages.length)];
+                    this.updateMissionIcon('🔥');
+                } else {
+                    message = defendMessages[Math.floor(Math.random() * defendMessages.length)];
+                    this.updateMissionIcon('🛡️');
+                }
+                
+                this.showMessage(message, '');
+            }
+            
+            updateSweetSpot() {
+                const attackSweetSpot = document.getElementById('attack-sweet-spot');
+                const defendSweetSpot = document.getElementById('defend-sweet-spot');
+                
+                if (this.currentPhase === 'attack') {
+                    attackSweetSpot.style.left = this.sweetSpotPosition + '%';
+                    attackSweetSpot.style.width = this.currentSweetSpotWidth + '%';
+                    attackSweetSpot.style.display = 'block';
+                    defendSweetSpot.style.display = 'none';
+                } else {
+                    defendSweetSpot.style.left = this.sweetSpotPosition + '%';
+                    defendSweetSpot.style.width = this.currentSweetSpotWidth + '%';
+                    defendSweetSpot.style.display = 'block';
+                    attackSweetSpot.style.display = 'none';
+                }
+            }
+            
+            resetThumb() {
+                const attackThumb = document.getElementById('attack-thumb');
+                const defendThumb = document.getElementById('defend-thumb');
+                
+                this.thumbPosition = 2;
+                
+                if (this.currentPhase === 'attack') {
+                    attackThumb.style.left = '2%';
+                    attackThumb.style.display = 'block';
+                    defendThumb.style.display = 'none';
+                } else {
+                    defendThumb.style.left = '2%';
+                    defendThumb.style.display = 'block';
+                    attackThumb.style.display = 'none';
+                }
+            }
+            
+            animate() {
+                if (!this.gameActive || this.missionFinished) return;
+                
+                this.thumbPosition += this.animationSpeed * this.direction;
+                
+                if (this.thumbPosition >= 98) {
+                    this.direction = -1;
+                    this.thumbPosition = 98;
+                } else if (this.thumbPosition <= 2) {
+                    this.direction = 1;
+                    this.thumbPosition = 2;
+                }
+                
+                const activeThumb = this.currentPhase === 'attack' ? 
+                    document.getElementById('attack-thumb') : 
+                    document.getElementById('defend-thumb');
+                    
+                if (activeThumb.style.display !== 'none') {
+                    activeThumb.style.left = this.thumbPosition + '%';
+                }
+                
+                if (Date.now() - this.phaseStartTime > this.phaseDuration) {
+                    this.timeOut();
+                    return;
+                }
+                
+                this.animationId = requestAnimationFrame(() => this.animate());
+            }
+            
+            handleAction() {
+                const sweetSpotStart = this.sweetSpotPosition;
+                const sweetSpotEnd = this.sweetSpotPosition + this.currentSweetSpotWidth;
+                const tolerance = 1;
+                const isInSweetSpot = (this.thumbPosition >= (sweetSpotStart - tolerance)) && 
+                                     (this.thumbPosition <= (sweetSpotEnd + tolerance));
+                
+                console.log('Hit Detection:', {
+                    currentPhase: this.currentPhase,
+                    thumbPosition: this.thumbPosition,
+                    sweetSpotStart: sweetSpotStart,
+                    sweetSpotEnd: sweetSpotEnd,
+                    tolerance: tolerance,
+                    isInSweetSpot: isInSweetSpot
+                });
+                
+                this.gameActive = false;
+                this.waitingForNext = true;
+                
+                this.processAction(isInSweetSpot);
+            }
+            
+            processAction(success) {
+                if (success) {
+                    if (this.currentPhase === 'attack') {
+                        this.attackScore++;
+                        const successMessages = [
+                            "🔥 COLPO CRITICO! Attacco devastante!",
+                            "⚔️ PERFECT HIT! Colpo perfetto!",
+                            "💥 DEVASTAZIONE! Il nemico vacilla!",
+                            "🎯 BULL'S EYE! Centro del bersaglio!",
+                            "⚡ LIGHTNING STRIKE! Veloce e preciso!"
+                        ];
+                        const randomMessage = successMessages[Math.floor(Math.random() * successMessages.length)];
+                        this.showMessage(randomMessage, 'success');
+                        this.updateMissionIcon('🔥');
+                    } else {
+                        const successMessages = [
+                            "🛡️ PARATA PERFETTA! Attacco respinto!",
+                            "⚔️ BLOCK! Difesa impeccabile!",
+                            "💪 RESISTENZA! Saldo come una roccia!",
+                            "🏰 FORTRESS! Invalicabile!",
+                            "🌊 DEFLECT! Colpo deviato magistralmente!"
+                        ];
+                        const randomMessage = successMessages[Math.floor(Math.random() * successMessages.length)];
+                        this.showMessage(randomMessage, 'success');
+                        this.updateMissionIcon('🛡️');
+                    }
+                } else {
+                    if (this.currentPhase === 'attack') {
+                        const failMessages = [
+                            "❌ MISS! L'attacco va a vuoto!",
+                            "🌀 WHIFF! Colpo mancato!",
+                            "💨 ARIA! Il nemico schiva!",
+                            "🎯 OFF TARGET! Fuori bersaglio!",
+                            "⚡ TOO SLOW! Troppo lento!"
+                        ];
+                        const randomMessage = failMessages[Math.floor(Math.random() * failMessages.length)];
+                        this.showMessage(randomMessage, 'fail');
+                        this.updateMissionIcon('❌');
+                    } else {
+                        this.defendScore--;
+                        const failMessages = [
+                            "💔 COLPITO! La difesa cede!",
+                            "⚔️ PENETRATO! Attacco subito!",
+                            "💥 IMPATTO! Danni alla resistenza!",
+                            "🩸 FERITA! La guardia si abbassa!",
+                            "💀 DAMAGE! Resistenza compromessa!"
+                        ];
+                        const randomMessage = failMessages[Math.floor(Math.random() * failMessages.length)];
+                        this.showMessage(randomMessage, 'fail');
+                        this.updateMissionIcon('💔');
+                    }
+                }
+                
+                this.updateDisplay();
+                
+                if (this.checkMissionEnd()) {
+                    return;
+                }
+                
+                setTimeout(() => {
+                    if (!this.missionFinished) {
+                        this.startCombatPhase();
+                    }
+                }, 1500);
+            }
+            
+            timeOut() {
+                this.gameActive = false;
+                this.waitingForNext = true;
+                
+                if (this.currentPhase === 'defend') {
+                    this.defendScore--;
+                    this.showMessage("⏰ TROPPO LENTO! L'attacco nemico passa!", 'fail');
+                    this.updateMissionIcon('⏰');
+                } else {
+                    this.showMessage("⏰ TIMING SBAGLIATO! Riprova con più velocità!", '');
+                    this.updateMissionIcon('⏰');
+                }
+                
+                this.updateDisplay();
+                
+                if (this.checkMissionEnd()) {
+                    return;
+                }
+                
+                setTimeout(() => {
+                    if (!this.missionFinished) {
+                        this.startCombatPhase();
+                    }
+                }, 1500);
+            }
+            
+            updateDisplay() {
+                const attackPercentage = (this.attackScore / this.maxAttackScore) * 100;
+                document.getElementById('attack-counter').textContent = `${this.attackScore}/${this.maxAttackScore}`;
+                document.getElementById('attack-progress').style.width = attackPercentage + '%';
+                
+                const defendPercentage = (this.defendScore / this.maxDefendScore) * 100;
+                document.getElementById('defend-counter').textContent = `${this.defendScore}/${this.maxDefendScore}`;
+                document.getElementById('defend-progress').style.width = defendPercentage + '%';
+            }
+            
+            checkMissionEnd() {
+                if (this.defendScore <= 0) {
+                    this.endMission('defeat');
+                    return true;
+                } else if (this.attackScore >= this.maxAttackScore) {
+                    this.endMission('victory');
+                    return true;
+                }
+                return false;
+            }
+            
+            endMission(result) {
+                this.missionFinished = true;
+                this.gameActive = false;
+                
+                if (this.animationId) {
+                    cancelAnimationFrame(this.animationId);
+                }
+                
+                if (this.missionTimer) {
+                    clearInterval(this.missionTimer);
+                }
+                
+                this.showResult(result);
+            }
+            
+            showResult(result) {
+                const resultTitle = document.getElementById('result-title');
+                const resultIcon = document.getElementById('result-icon');
+                const resultMessage = document.getElementById('result-message');
+                const resultButtons = document.getElementById('result-buttons');
+                
+                if (result === 'victory') {
+                    resultTitle.textContent = "VITTORIA TOTALE!";
+                    resultTitle.className = "result-title result-success";
+                    resultIcon.textContent = "🏆";
+                    resultMessage.textContent = `DOMINAZIONE COMPLETA! Hai raggiunto ${this.attackScore}/${this.maxAttackScore} attacchi riusciti mantenendo ${this.defendScore}/${this.maxDefendScore} punti difesa. Tempo rimanente: ${Math.floor(this.missionTimeLeft/60)}:${(this.missionTimeLeft%60).toString().padStart(2,'0')}. Sei un maestro del combattimento stealth!`;
+                    this.updateMissionIcon('👑');
+                    
+                    resultButtons.innerHTML = `
+                        <button class="retry-button" onclick="continueToNextScene()" style="background: linear-gradient(135deg, #27ae60, #229954);">CONTINUA</button>
+                    `;
+                } else if (result === 'time_victory') {
+                    resultTitle.textContent = "VITTORIA PER TEMPO!";
+                    resultTitle.className = "result-title result-success";
+                    resultIcon.textContent = "⏰";
+                    resultMessage.textContent = `TEMPO SCADUTO - MA HAI VINTO! Attacco: ${this.attackScore}/${this.maxAttackScore}, Difesa: ${this.defendScore}/${this.maxDefendScore}. La tua strategia offensiva/difensiva è stata superiore!`;
+                    this.updateMissionIcon('🎯');
+                    
+                    resultButtons.innerHTML = `
+                        <button class="retry-button" onclick="continueToNextScene()" style="background: linear-gradient(135deg, #27ae60, #229954);">CONTINUA</button>
+                    `;
+                } else if (result === 'time_defeat') {
+                    resultTitle.textContent = "TEMPO SCADUTO!";
+                    resultTitle.className = "result-title result-failure";
+                    resultIcon.textContent = "⏰";
+                    resultMessage.textContent = `TEMPO SCADUTO! Attacco: ${this.attackScore}/${this.maxAttackScore}, Difesa: ${this.defendScore}/${this.maxDefendScore}. La tua strategia non è stata abbastanza efficace. Devi bilanciare meglio attacco e difesa!`;
+                    this.updateMissionIcon('💥');
+                    
+                    resultButtons.innerHTML = `
+                        <button class="retry-button" onclick="restartMission()">NUOVA BATTAGLIA?</button>
+                    `;
+                } else {
+                    resultTitle.textContent = "SCONFITTA!";
+                    resultTitle.className = "result-title result-failure";
+                    resultIcon.textContent = "💀";
+                    resultMessage.textContent = `DIFESA CROLLATA! La tua resistenza è stata sopraffatta. Attacco finale: ${this.attackScore}/${this.maxAttackScore}, Difesa finale: ${this.defendScore}/${this.maxDefendScore}. Devi migliorare le tue capacità difensive!`;
+                    this.updateMissionIcon('💥');
+                    
+                    resultButtons.innerHTML = `
+                        <button class="retry-button" onclick="restartMission()">NUOVA BATTAGLIA?</button>
+                    `;
+                }
+                
+                document.getElementById('result-screen').classList.remove('hidden');
+            }
+            
+            showMessage(message, statusClass) {
+                const statusDiv = document.getElementById('game-status');
+                statusDiv.textContent = message;
+                if (statusClass === 'fail') {
+                    statusDiv.style.color = '#FF6347';
+                } else if (statusClass === 'success') {
+                    statusDiv.style.color = '#98FB98';
+                } else {
+                    statusDiv.style.color = '#FFD700';
+                }
+            }
+        }
+        
+        let game;
+        
+        function startGame() {
+            game = new StealthCombatGame();
+        }
+        
+        function restartMission() {
+            document.getElementById('result-screen').classList.add('hidden');
+            
+            document.getElementById('attack-counter').textContent = '0/15';
+            document.getElementById('defend-counter').textContent = '15/15';
+            document.getElementById('attack-progress').style.width = '0%';
+            document.getElementById('defend-progress').style.width = '100%';
+            document.getElementById('timer-text').textContent = '3:00';
+            document.getElementById('timer-fill').style.width = '100%';
+            document.getElementById('missionIcon').textContent = '⚔️';
+            
+            document.getElementById('timer-text').className = 'timer-value';
+            
+            document.getElementById('attack-sweet-spot').style.display = 'none';
+            document.getElementById('defend-sweet-spot').style.display = 'none';
+            document.getElementById('attack-thumb').style.display = 'none';
+            document.getElementById('defend-thumb').style.display = 'none';
+            
+            const backgroundImg = document.getElementById('background-image');
+            if (backgroundImg) {
+                backgroundImg.src = missionConfig.background.image;
+            }
+            
+            startGame();
+        }
+        
+        function continueToNextScene() {
+            document.getElementById('result-screen').classList.add('hidden');
+            alert(missionConfig.texts.victoryAlert);
+            restartMission();
+        }
+        
+        window.addEventListener('load', startGame);
+    </script>
+</body>
+</html>

@@ -1,0 +1,81 @@
+/* ======================================================================= */
+/* === STILI SFIDA 2: LOCKPICK CON TIMER (4 BANDE DESTRA) ================ */
+/* ======================================================================= */
+
+.right-top-band-timer {
+    width: 100%;
+    height: 24%;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+.right-center-top-band-timer {
+    width: 100%;
+    height: 24%;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+.right-center-band-timer {
+    width: 100%;
+    height: 24%;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+}
+
+.right-bottom-band-timer {
+    width: 100%;
+    height: 24%;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    position: relative;
+}
+
+.timer-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #2ECC71, #F39C12, #E74C3C);
+    border-radius: 7px;
+    transition: width 0.5s ease;
+    width: 100%;
+}
+
+.timer-value {
+    color: #2ECC71;
+    font-size: 3vh;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    transition: color 0.3s ease;
+}
+
+.timer-value.warning {
+    color: #F39C12;
+}
+
+.timer-value.danger {
+    color: #E74C3C;
+}

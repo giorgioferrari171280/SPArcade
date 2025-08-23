@@ -1,0 +1,121 @@
+<!-- Double Bar Combat Challenge Component -->
+<div class="spa-section challenge-section" id="challenge-double-bar-section">
+    <div class="letterbox-wrapper">
+        <div class="main-container">
+            <!-- Elemento figlio identico al padre con immagine -->
+            <div class="child-container">
+                <img id="background-image" src="stealth_mission_bg.png" alt="Immagine di sfondo">
+            </div>
+            
+            <!-- Overlay shadow sopra l'immagine -->
+            <div class="overlay-shadow"></div>
+            
+            <!-- Layout container principale -->
+            <div class="layout-container">
+                <!-- Area centrale con meta sinistra e destra -->
+                <div class="main-section">
+                    <!-- Meta sinistra con i suoi contenitori -->
+                    <div class="meta_sinistra">
+                        <div class="box_immagine">
+                            <div class="mission-icon" id="missionIcon">⚔️</div>
+                        </div>
+                        <div class="barra_verticale">
+                            <!-- Timer verticale o altre informazioni -->
+                        </div>
+                        <div class="barra_inferiore">
+                            <div class="game-status" id="game-status">
+                                <!-- Il testo viene caricato da JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Meta destra con i tre contenitori orizzontali -->
+                    <div class="meta_destra">
+                        <div class="destra_alto">
+                            <div class="timer-section">
+                                <span class="variable-label">⏰ Tempo:</span>
+                                <div style="display: flex; flex-direction: column; align-items: flex-end; flex: 1; margin-left: 20px;">
+                                    <span class="timer-value" id="timer-text">3:00</span>
+                                    <div class="timer-bar" style="width: 100%;">
+                                        <div class="timer-fill" id="timer-fill"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="destra_centro">
+                            <!-- NUOVA SEZIONE: Metà superiore con testo -->
+                            <div class="destra_centro_top">
+                                <div class="text_box_centro">
+                                    <p class="combat-bar-label attack">🔥 ATTACCA 🔥</p>
+                                </div>
+                                <span class="combat-counter-value attack" id="attack-counter">0/15</span>
+                            </div>
+                            <!-- NUOVA SEZIONE: Metà inferiore con box rettangolare -->
+                            <div class="destra_centro_bottom">
+                                <div class="rect_box_centro">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill attack" id="attack-progress"></div>
+                                    </div>
+                                    <div class="lockpick-bar" id="attack-bar">
+                                        <div class="lockpick-sweet-spot attack" id="attack-sweet-spot"></div>
+                                        <div class="lockpick-thumb" id="attack-thumb"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="destra_basso">
+                            <!-- NUOVA SEZIONE: Metà superiore con testo -->
+                            <div class="destra_basso_top">
+                                <div class="text_box_basso">
+                                    <p class="combat-bar-label defend">🛡️ DIFENDI 🛡️</p>
+                                </div>
+                                <span class="combat-counter-value defend" id="defend-counter">15/15</span>
+                            </div>
+                            <!-- NUOVA SEZIONE: Metà inferiore con box rettangolare -->
+                            <div class="destra_basso_bottom">
+                                <div class="rect_box_basso">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill defend" id="defend-progress"></div>
+                                    </div>
+                                    <div class="lockpick-bar" id="defend-bar">
+                                        <div class="lockpick-sweet-spot defend" id="defend-sweet-spot"></div>
+                                        <div class="lockpick-thumb" id="defend-thumb"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Footer section -->
+                <div class="footer-section">
+                    <p>⚔️ STEALTH COMBAT - DUAL PHASE ⚔️</p>
+                </div>
+            </div>
+            
+            <!-- Game UI Footer -->
+            <footer class="game-ui-footer-section">
+                <div class="footer-left">
+                    <button class="back-button" onclick="backToMainMenu()">🏃 RITIRATA</button>
+                </div>
+                <div class="footer-center"></div>
+                <div class="footer-right">
+                    <div class="volume-control">
+                        <span id="volume-icon" class="volume-icon" onclick="toggleMute()">🔊</span>
+                        <input type="range" id="volume-slider" class="volume-slider" min="0" max="100" value="50" oninput="changeVolume(this.value)">
+                    </div>
+                </div>
+            </footer>
+
+            <!-- Schermata risultato -->
+            <div id="result-screen" class="result-overlay hidden">
+                <div class="result-content">
+                    <div class="result-title" id="result-title"></div>
+                    <div class="result-icon" id="result-icon"></div>
+                    <div class="result-message" id="result-message"></div>
+                    <div id="result-buttons"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

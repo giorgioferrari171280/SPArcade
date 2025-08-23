@@ -1,0 +1,171 @@
+/* ===================================================================== */
+/* === STILI SFIDA 6: SUDDEN DEATH (NUOVA SFIDA) ======================= */
+/* ===================================================================== */
+
+.sudden-death-layout {
+    width: 100%;
+    height: 100%;
+    display: flex;
+}
+
+.sudden-death-left-column {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 2%;
+    gap: 2%;
+}
+
+.sudden-death-right-column {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 2%;
+    gap: 2%;
+}
+
+.sudden-death-image-container {
+    aspect-ratio: 1;
+    max-width: 60vh;
+    max-height: 60vh;
+    width: min(100%, 60vh);
+    background: rgba(0, 0, 0, 0.2);
+    border: 3px solid rgba(255, 0, 0, 0.3);
+    border-radius: 12px;
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    margin: 0 auto;
+    align-self: center;
+    animation: sudden-death-glow 2s infinite;
+}
+
+@keyframes sudden-death-glow {
+    0%, 100% {
+        border-color: rgba(255, 0, 0, 0.3);
+        box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);
+    }
+    50% {
+        border-color: rgba(255, 0, 0, 0.6);
+        box-shadow: 0 0 30px rgba(255, 0, 0, 0.4);
+    }
+}
+
+.sudden-death-status-box {
+    width: 100%;
+    flex: 1;
+    margin-top: 2%;
+    background: rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(255, 0, 0, 0.2);
+    border-radius: 12px;
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    position: relative;
+}
+
+/* Testo narrativo per sudden death */
+#skill-challenge-sudden-death-section .narrative-text {
+    color: #E6E6E6;
+    font-size: 2.2vmin;
+    text-align: center;
+    line-height: 1.4;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: normal;
+    font-style: italic;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.sudden-death-warning {
+    color: #e74c3c;
+    font-size: 4vh;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    text-align: center;
+    animation: sudden-death-pulse 1.5s infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes sudden-death-pulse {
+    0%, 100% {
+        color: #e74c3c;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8), 0 0 20px rgba(231, 76, 60, 0.6);
+    }
+    50% {
+        color: #c0392b;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8), 0 0 40px rgba(192, 57, 43, 0.8);
+    }
+}
+
+.sudden-death-band {
+    width: 100%;
+    height: 20%;
+    background: rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(255, 0, 0, 0.2);
+    border-radius: 12px;
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    margin-bottom: 10px;
+}
+
+.sudden-death-final-band {
+    width: 100%;
+    height: 25%;
+    background: rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(255, 0, 0, 0.2);
+    border-radius: 12px;
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    position: relative;
+}
+
+.sudden-death-bar {
+    width: 100%;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 25px;
+    position: relative;
+    overflow: hidden;
+    border: 3px solid rgba(255, 0, 0, 0.4);
+    margin-bottom: 10px;
+}
+
+.sudden-death-sweet-spot {
+    position: absolute;
+    height: 100%;
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    border-radius: 22px;
+    top: 0;
+    opacity: 0.9;
+    box-shadow: 0 0 30px rgba(231, 76, 60, 0.8);
+    transition: all 0.2s ease;
+}
+
+.sudden-death-thumb {
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    background: #fff;
+    border-radius: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.8);
+    transition: left 0.05s linear;
+    border: 3px solid #e74c3c;
+    z-index: 5;
+}
